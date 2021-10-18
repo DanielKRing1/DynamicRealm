@@ -2,7 +2,7 @@ import Realm from 'realm';
 
 // CONSTANTS
 
-const DEFAULT_PATH = 'DynamicRealm.path';
+const DEFAULT_PATH: string = 'DynamicRealm.path';
 
 // For array data
 const ARRAY_METADATA_HANDLERS: DefaultMetadataHandlers = {
@@ -46,25 +46,42 @@ const METADATA_ARRAY_INTEGER_ERROR = new Error('Please provide an integer value 
 // SCHEMAS
 
 const DYNAMIC_SCHEMA_NAME: string = 'Dynamic';
-const DYNAMIC_SCHEMA_PROPERTIES: DynamicSchemaProperties = {
-    name: 'string',
-    primaryKey: 'string',
-    schema: 'string',
-    metadata: 'string',
-};
 const DynamicSchema: Realm.ObjectSchema = {
     name: DYNAMIC_SCHEMA_NAME,
     primaryKey: 'name',
-    properties: DYNAMIC_SCHEMA_PROPERTIES,
+    properties: {
+        name: 'string',
+        primaryKey: 'string',
+        realmName: 'string',
+        schema: 'string',
+        metadata: 'string',
+    },
+};
+
+const REALM_SCHEMA_NAME: string = 'Realms';
+const RealmSchema: Realm.ObjectSchema = {
+    name: REALM_SCHEMA_NAME,
+    primaryKey: 'name',
+    properties: {
+        name: 'string',
+        realmPath: 'string',
+        schemaNames: 'string[]',
+        schemaVersion: { type: 'int', default: 0 },
+    },
 };
 
 // TYPES
 
 type InitParams = {
-    path: string;
+    realmPath: string;
+};
+type SaveSchemaParams = {
+    realmName: string;
+    realmPath: string;
+    newSchema: Realm.ObjectSchema;
 };
 type LoadRealmParams = {
-    path: string;
+    realmPath: string;
     schemaNames: string[];
 };
 
@@ -76,8 +93,15 @@ type KeyValuePair = {
 type DynamicSchemaProperties = {
     name: string;
     primaryKey: string;
+    realmName: string;
     schema: string;
     metadata: string;
+};
+type RealmSchemaProperties = {
+    name: string;
+    realmPath: string;
+    schemaNames: string[];
+    schemaVersion: number;
 };
 
 type DefaultMetadataHandlers = {
@@ -92,19 +116,20 @@ let realm: Realm = null;
 
 // FUNCTIONS
 
-async function init({ path = DEFAULT_PATH }: InitParams): Promise<void> {
+async function init({ realmPath: path = DEFAULT_PATH }: InitParams): Promise<void> {
     // 1. Open a realm containing only the DynamicSchema
-    realm = await Realm.open({ schema: [DynamicSchema], path });
+    realm = await Realm.open({ schema: [RealmSchema, DynamicSchema], path });
 }
 
-function saveSchema(newSchema: Realm.ObjectSchema): void {
+function saveSchema({ realmName, realmPath, newSchema }: SaveSchemaParams): void {
     if (realm === null) throw INIT_ERROR;
 
-    // 1. Create object to save
+    // 1. Create DynamicSchema object to save
     const schemaObj: DynamicSchemaProperties = {
         // 1.1. Record the 'name' property for simple querying
         name: newSchema.name,
         primaryKey: newSchema.primaryKey,
+        realmName,
         // 1.2. Stringify the schema object
         schema: JSON.stringify(newSchema),
         // 1.3. Init the metadata as empty
@@ -112,8 +137,34 @@ function saveSchema(newSchema: Realm.ObjectSchema): void {
     };
 
     realm.write(() => {
-        // 2. Add the new schema to the DynamicSchema table
+        // 2. Check if schema already exists
+        const existingSchema: DynamicSchemaProperties = realm.objectForPrimaryKey(DYNAMIC_SCHEMA_NAME, newSchema.name);
+
+        // 3. If exists, increment RealmSchema
+        if (existingSchema) _incrementRealmSchemaVersion(realmName);
+
+        // 4. Add the new schema to the DynamicSchema table
         realm.create(DYNAMIC_SCHEMA_NAME, schemaObj);
+
+        // 5. Check if RealmSchema exists
+        let realmSchema: RealmSchemaProperties = realm.objectForPrimaryKey(REALM_SCHEMA_NAME, realmName);
+        // 5.1. Create RealmSchema object if not exists
+        if (!realmSchema) {
+            // // 5.1.1. Create object
+            const realmSchemaObj: RealmSchemaProperties = {
+                name: realmName,
+                realmPath,
+                // Empty
+                schemaNames: [],
+                schemaVersion: 0,
+            };
+
+            // // 5.1.2. Save
+            realmSchema = realm.create(REALM_SCHEMA_NAME, realmSchemaObj);
+        }
+
+        // 6. Add new DynamicSchema's name to RealmSchema
+        realmSchema.schemaNames.push(newSchema.name);
     });
 }
 
@@ -151,7 +202,13 @@ function rmSchema(schemaName: string): boolean {
         // 2. Schema does not exist
         if (!schema) schemaExists = false;
         // 3. Schema exists
-        else realm.delete(schema);
+        else {
+            // 3.1. Delete
+            realm.delete(schema);
+
+            // 3.2. Remove schema name from RealmSchema
+            _rmRealmSchemaName(schema);
+        }
     });
 
     return schemaExists;
@@ -170,10 +227,65 @@ function rmSchemas(schemaNames: string[]): string[] {
         removedSchemas = schemas.map((schema: DynamicSchemaProperties) => schema.name);
 
         // 3. Delete schemas
-        schemas.forEach((schema: DynamicSchemaProperties) => realm.delete(schema));
+        schemas.forEach((schema: DynamicSchemaProperties) => {
+            // 3.1. Delete
+            realm.delete(schema);
+            // 3.2. Remove schema name from RealmSchema
+            _rmRealmSchemaName(schema);
+        });
     });
 
     return removedSchemas;
+}
+
+/**
+ * Private helper method for removing a DynamicSchema's schema name from its RealmSchema's list
+ * Subscequently deletes the RealmSchema if it no longer contains any schema names
+ *
+ * @param schema the DynamicSchema whose name will be removed from its RealmSchema's list
+ */
+function _rmRealmSchemaName(schema: DynamicSchemaProperties): void {
+    // 1. Get RealmSchema
+    const realmSchema: RealmSchemaProperties = realm.objectForPrimaryKey(REALM_SCHEMA_NAME, schema.realmName);
+
+    // 2. Remove schema name from RealmSchema
+    if (realmSchema) {
+        const index = realmSchema.schemaNames.indexOf(schema.name);
+        realmSchema.schemaNames.splice(index, 1);
+
+        // 3. Delete RealmSchema if no longer contains any schema names
+        if (realmSchema.schemaNames.length == 0) realm.delete(realmSchema);
+    }
+}
+
+function _incrementRealmSchemaVersion(realmName: string) {
+    // 1. Get RealmSchema
+    const realmSchema: RealmSchemaProperties = realm.objectForPrimaryKey(REALM_SCHEMA_NAME, realmName);
+
+    // 2. Increment schemaVersion
+    if (realmSchema) {
+        realmSchema.schemaVersion++;
+    }
+}
+
+async function loadRealm(realmName: string): Promise<Realm> {
+    if (realm === null) throw INIT_ERROR;
+
+    // 1. Get RealmSchema
+    const realmSchema: RealmSchemaProperties = realm.objectForPrimaryKey(REALM_SCHEMA_NAME, realmName);
+
+    // 2. Get DynamicSchemas
+    const entries: DynamicSchemaProperties[] = getSchemas(realmSchema.schemaNames);
+
+    // 3. Map to Realm.ObjectSchemas
+    const schema: Realm.ObjectSchema[] = entries.map((entry: DynamicSchemaProperties) => ({
+        name: entry.name,
+        primaryKey: entry.primaryKey,
+        properties: JSON.parse(entry.schema),
+    }));
+
+    // 4. Open Realm
+    return Realm.open({ schema, path: realmSchema.realmPath, schemaVersion: realmSchema.schemaVersion });
 }
 
 /**
@@ -184,17 +296,20 @@ function rmSchemas(schemaNames: string[]): string[] {
  *                      will load all schemas if not provided
  * @returns
  */
-async function loadRealm({ path, schemaNames = [] }: LoadRealmParams): Promise<Realm> {
+async function loadRealmFromSchemas({ realmPath: path, schemaNames = [] }: LoadRealmParams): Promise<Realm> {
     if (realm === null) throw INIT_ERROR;
 
+    // 1. Get DynamicSchemas
     const entries: DynamicSchemaProperties[] = getSchemas(schemaNames);
 
+    // 2. Map to Realm.ObjectSchemas
     const schema: Realm.ObjectSchema[] = entries.map((entry: DynamicSchemaProperties) => ({
         name: entry.name,
         primaryKey: entry.primaryKey,
         properties: JSON.parse(entry.schema),
     }));
 
+    // 3. Open Realm
     return Realm.open({ schema, path });
 }
 
@@ -222,6 +337,8 @@ export default {
     rmSchemas,
 
     loadRealm,
+    loadRealmFromSchemas,
+
     updateMetadata,
 
     ARRAY_METADATA_HANDLERS,
