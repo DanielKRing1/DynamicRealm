@@ -1,4 +1,6 @@
+import Realm from 'realm';
 import { INIT_ERROR } from '../Errors';
+import { DynamicRealm, DynamicSchema } from '../Schemas';
 
 class RealmSingleton {
     static _instance: RealmSingleton;
@@ -16,8 +18,9 @@ class RealmSingleton {
         return this.realm;
     }
 
-    setRealm(realm: Realm): void {
-        this.realm = realm;
+    async openRealm(realmPath: string): Promise<void> {
+        this.realm = await Realm.open({ schema: [DynamicRealm, DynamicSchema], path: realmPath });
+
         Object.freeze(this.realm);
     }
 }

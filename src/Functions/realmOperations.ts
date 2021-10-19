@@ -3,12 +3,10 @@ import { globalRealm } from '../Realm/gloabalRealm';
 import { DYNAMIC_REALM_NAME, DynamicRealm, DynamicSchema } from '../Schemas';
 import { getSchemas } from './dynamicSchemaOperations';
 
-export async function init({ realmPath: path = DEFAULT_PATH }: InitParams = {}): Promise<void> {
-    // 1. Open a realm containing only the DynamicSchema
-    const realm = await Realm.open({ schema: [DynamicRealm, DynamicSchema], path });
-
-    // 2. Store realm in global wrapper
-    globalRealm.setRealm(realm);
+export async function init({ realmPath = DEFAULT_PATH }: InitParams = {}): Promise<void> {
+    // 1. Open a realm containing only the DynamicSchema and
+    // Store realm in global wrapper
+    await globalRealm.openRealm(realmPath);
 }
 
 export async function loadRealm(realmName: string): Promise<Realm> {
