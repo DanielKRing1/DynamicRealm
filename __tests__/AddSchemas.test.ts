@@ -1,8 +1,11 @@
 jest.mock('realm');
-import Realm from 'realm';
+
+import DynamicRealm from '../src';
 
 describe('Adding new schemas via DynamicRealm', () => {
     it("Should add the new schema json to the 'dynamic' realm schema", () => {
-        console.log(Realm);
+        const realmPath = 'CustomRealmPath.path';
+
+        DynamicRealm.init({ realmPath });
     });
 });

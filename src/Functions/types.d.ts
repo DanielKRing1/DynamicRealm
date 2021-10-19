@@ -1,5 +1,5 @@
 type InitParams = {
-    realmPath: string;
+    realmPath?: string;
 };
 type SaveSchemaParams = {
     realmName: string;

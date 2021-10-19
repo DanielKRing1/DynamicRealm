@@ -1,4 +1,3 @@
-import Realm from 'realm';
 import { saveSchema, getSchema, getSchemas, rmSchema, rmSchemas } from './Functions/dynamicSchemaOperations';
 import { updateMetadata } from './Functions/metadataOperations';
 import { init, loadRealm, loadRealmFromSchemas } from './Functions/realmOperations';
