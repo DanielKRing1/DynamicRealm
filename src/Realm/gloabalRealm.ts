@@ -5,7 +5,7 @@ import { DynamicRealm, DynamicSchema } from '../Schemas';
 class RealmSingleton {
     static _instance: RealmSingleton;
 
-    realm: Realm;
+    dynamicRealm: Realm = null;
 
     constructor() {
         // Short-circuit
@@ -13,15 +13,17 @@ class RealmSingleton {
     }
 
     getRealm(): Realm {
-        if (this.realm === null) throw INIT_ERROR;
+        if (this.dynamicRealm === null) throw INIT_ERROR;
 
-        return this.realm;
+        return this.dynamicRealm;
     }
 
     async openRealm(realmPath: string): Promise<void> {
-        this.realm = await Realm.open({ schema: [DynamicRealm, DynamicSchema], path: realmPath });
+        this.dynamicRealm = await Realm.open({ schema: [DynamicRealm, DynamicSchema], path: realmPath });
 
-        Object.freeze(this.realm);
+        Object.freeze(this.dynamicRealm);
+
+        console.log(Realm);
     }
 }
 
