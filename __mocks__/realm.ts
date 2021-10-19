@@ -5,35 +5,38 @@ type Schema = {
     properties: Dict<any>;
 };
 
-// DATA
+// REALM MOCK CLASS
 
-let schema: Schema[] = [];
-let data: Dict<any[]> = {};
+export default class Realm {
+    schema: Schema[] = [];
+    schemaVersion: number;
 
-// REALM OBJECT
-
-export default {
-    schema,
-
-    data,
+    data: Dict<any[]> = {};
 
     // Init
-    open: (params: { schema: Schema[] }): void => {
-        schema = params.schema;
-    },
+    static open(params: { schema: Schema[]; schemaVersion: number }): Realm {
+        const realm: Realm = new Realm(params);
+
+        return realm;
+    }
+
+    constructor(params: { schema: Schema[]; schemaVersion: number }) {
+        this.schema = params.schema;
+        this.schemaVersion = params.schemaVersion;
+    }
 
     // Read
-    objects: (schemaName: string): any[] => {
-        return data[schemaName];
-    },
+    objects(schemaName: string): any[] {
+        return this.data[schemaName];
+    }
 
     // Write
-    write: (fn: () => void): void => {
+    write(fn: () => void): void {
         fn();
-    },
+    }
 
-    create: (schemaName: string, data: any) => {
-        data[schemaName].push(data);
-        return data;
-    },
-};
+    create(schemaName: string, newEntry: any) {
+        this.data[schemaName].push(newEntry);
+        return newEntry;
+    }
+}
