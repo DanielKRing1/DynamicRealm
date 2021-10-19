@@ -1,5 +1,4 @@
 import { globalRealm } from '../Realm/gloabalRealm';
-import { INIT_ERROR } from '../Errors';
 import { getSchema } from './dynamicSchemaOperations';
 
 export function updateMetadata<R>(schemaName: string, updateHandler: (allMetaData: any) => R): R {
