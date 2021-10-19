@@ -9,19 +9,21 @@ type Schema = {
 
 export default class Realm {
     schema: Schema[] = [];
+    path: string;
     schemaVersion: number;
 
     data: Dict<any[]> = {};
 
     // Init
-    static open(params: { schema: Schema[]; schemaVersion: number }): Realm {
+    static open(params: { schema: Schema[]; path: string; schemaVersion: number }): Realm {
         const realm: Realm = new Realm(params);
 
         return realm;
     }
 
-    constructor(params: { schema: Schema[]; schemaVersion: number }) {
+    constructor(params: { schema: Schema[]; path: string; schemaVersion: number }) {
         this.schema = params.schema;
+        this.path = params.path;
         this.schemaVersion = params.schemaVersion;
     }
 
