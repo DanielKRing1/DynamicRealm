@@ -2,22 +2,22 @@ import { globalRealm } from '../Realm/gloabalRealm';
 import { DYNAMIC_SCHEMA_NAME, DYNAMIC_REALM_NAME } from '../Schemas';
 import { _incrementRealmSchemaVersion, _rmRealmSchemaName } from './dynamicRealmOperations';
 
-export function saveSchema({ realmName, realmPath, newSchema }: SaveSchemaParams): void {
+export function saveSchema({ realmName, realmPath, schema }: SaveSchemaParams): void {
     // 1. Create DynamicSchema object to save
     const schemaObj: DynamicSchemaProperties = {
         // 1.1. Record the 'name' property for simple querying
-        name: newSchema.name,
-        primaryKey: newSchema.primaryKey,
+        name: schema.name,
+        primaryKey: schema.primaryKey,
         realmName,
         // 1.2. Stringify the schema object
-        schema: JSON.stringify(newSchema),
+        schema: JSON.stringify(schema),
         // 1.3. Init the metadata as empty
         metadata: '',
     };
 
     globalRealm.getRealm().write(() => {
         // 2. Check if schema already exists
-        const existingSchema: DynamicSchemaProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_SCHEMA_NAME, newSchema.name);
+        const existingSchema: DynamicSchemaProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_SCHEMA_NAME, schema.name);
 
         // 3. If exists, increment DynamicRealm
         if (existingSchema) _incrementRealmSchemaVersion(realmName);
@@ -43,7 +43,7 @@ export function saveSchema({ realmName, realmPath, newSchema }: SaveSchemaParams
         }
 
         // 6. Add new DynamicSchema's name to DynamicRealm
-        realmSchema.schemaNames.push(newSchema.name);
+        realmSchema.schemaNames.push(schema.name);
     });
 }
 
@@ -60,9 +60,15 @@ export function getSchema(schemaName: string): DynamicSchemaProperties {
  * @returns
  */
 export function getSchemas(schemaNames: string[] = []): DynamicSchemaProperties[] {
-    if (schemaNames === []) return Array.from(globalRealm.getRealm().objects(DYNAMIC_SCHEMA_NAME));
+    if (schemaNames.length === 0) return Array.from(globalRealm.getRealm().objects(DYNAMIC_SCHEMA_NAME));
 
-    return schemaNames.map((schemaName: string) => getSchema(schemaName));
+    const schemas: DynamicSchemaProperties[] = [];
+    schemaNames.forEach((schemaName: string) => {
+        const schema: DynamicSchemaProperties = getSchema(schemaName);
+        if (schema) schemas.push(schema);
+    });
+
+    return schemas;
 }
 
 export function rmSchema(schemaName: string): boolean {
