@@ -22,8 +22,6 @@ class RealmSingleton {
         this.dynamicRealm = await Realm.open({ schema: [DynamicRealm, DynamicSchema], path: realmPath });
 
         Object.freeze(this.dynamicRealm);
-
-        console.log(Realm);
     }
 }
 
