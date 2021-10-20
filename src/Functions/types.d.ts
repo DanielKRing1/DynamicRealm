@@ -4,7 +4,7 @@ type InitParams = {
 type SaveSchemaParams = {
     realmName: string;
     realmPath: string;
-    newSchema: Realm.ObjectSchema;
+    schema: Realm.ObjectSchema;
 };
 type LoadRealmParams = {
     realmPath: string;
