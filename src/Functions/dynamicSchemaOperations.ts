@@ -2,7 +2,15 @@ import { globalRealm } from '../Realm/gloabalRealm';
 import { DYNAMIC_SCHEMA_NAME, DYNAMIC_REALM_NAME } from '../Schemas';
 import { _incrementRealmSchemaVersion, _rmRealmSchemaName } from './dynamicRealmOperations';
 
-export function saveSchema({ realmName, realmPath, schema }: SaveSchemaParams): void {
+export function saveSchemas(params: SaveSchemaParams[]) {
+    params.forEach((param: SaveSchemaParams) => saveSchema(param));
+}
+
+export const MetadataType: Dict<string> = {
+    Object: 'object',
+    List: 'list',
+};
+export function saveSchema({ realmName, realmPath, schema, metadataType = MetadataType.Object }: SaveSchemaParams): void {
     // 1. Create DynamicSchema object to save
     const schemaObj: DynamicSchemaProperties = {
         // 1.1. Record the 'name' property for simple querying
@@ -12,7 +20,7 @@ export function saveSchema({ realmName, realmPath, schema }: SaveSchemaParams): 
         // 1.2. Stringify the schema object
         schema: JSON.stringify(schema),
         // 1.3. Init the metadata as empty
-        metadata: '',
+        metadata: metadataType === MetadataType.Object ? '{}' : '[]',
     };
 
     globalRealm.getRealm().write(() => {

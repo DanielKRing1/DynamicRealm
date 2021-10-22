@@ -5,6 +5,7 @@ type SaveSchemaParams = {
     realmName: string;
     realmPath: string;
     schema: Realm.ObjectSchema;
+    metadataType?: string;
 };
 type LoadRealmParams = {
     realmPath: string;

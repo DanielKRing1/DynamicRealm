@@ -27,7 +27,7 @@ const SCHEMA_1_EXPECTED_ROW = {
     primaryKey: SCHEMA_1.primaryKey,
     realmName: SCHEMA_PARAMS_1.realmName,
     schema: JSON.stringify(SCHEMA_1),
-    metadata: '',
+    metadata: '{}',
 };
 
 const SCHEMA_2: Realm.ObjectSchema = {
@@ -48,7 +48,7 @@ const SCHEMA_2_EXPECTED_ROW = {
     primaryKey: SCHEMA_2.primaryKey,
     realmName: SCHEMA_PARAMS_2.realmName,
     schema: JSON.stringify(SCHEMA_2),
-    metadata: '',
+    metadata: '{}',
 };
 
 const SCHEMA_3: Realm.ObjectSchema = {
@@ -69,7 +69,7 @@ const SCHEMA_3_EXPECTED_ROW = {
     primaryKey: SCHEMA_3.primaryKey,
     realmName: SCHEMA_PARAMS_3.realmName,
     schema: JSON.stringify(SCHEMA_3),
-    metadata: '',
+    metadata: '{}',
 };
 
 const SCHEMA_4: Realm.ObjectSchema = {
@@ -90,7 +90,7 @@ const SCHEMA_4_EXPECTED_ROW = {
     primaryKey: SCHEMA_4.primaryKey,
     realmName: SCHEMA_PARAMS_4.realmName,
     schema: JSON.stringify(SCHEMA_4),
-    metadata: '',
+    metadata: '{}',
 };
 
 const REALM_NAME_SCHEMA_5 = REALM_NAME_2;
@@ -112,7 +112,7 @@ const SCHEMA_5_EXPECTED_ROW = {
     primaryKey: SCHEMA_5.primaryKey,
     realmName: SCHEMA_PARAMS_5.realmName,
     schema: JSON.stringify(SCHEMA_5),
-    metadata: '',
+    metadata: '{}',
 };
 
 const REALM_NAME_SCHEMA_6 = REALM_NAME_3;
@@ -134,7 +134,7 @@ const SCHEMA_6_EXPECTED_ROW = {
     primaryKey: SCHEMA_6.primaryKey,
     realmName: SCHEMA_PARAMS_6.realmName,
     schema: JSON.stringify(SCHEMA_6),
-    metadata: '',
+    metadata: '{}',
 };
 
 describe('Getting schemas via DynamicRealm before adding any schemas', () => {
