@@ -27,7 +27,7 @@ export default class Realm {
         params.schema.forEach((schema: Schema) => (this.data[schema.name] = []));
 
         this.path = params.path;
-        this.schemaVersion = params.schemaVersion;
+        this.schemaVersion = params.schemaVersion || 0;
     }
 
     // Read
@@ -61,6 +61,12 @@ export default class Realm {
 
         // 3. Add new row
         if (!isDuplicate) this.data[schemaName].push(row);
+
         return !isDuplicate ? row : undefined;
+    }
+
+    delete(schema: Realm.ObjectSchema) {
+        const index: number = this.schema.findIndex((s: Realm.ObjectSchema) => s.name === schema.name);
+        if (index > -1) this.schema.splice(index, 1);
     }
 }
