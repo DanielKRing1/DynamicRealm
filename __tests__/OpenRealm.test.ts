@@ -127,7 +127,7 @@ describe('DynamicRealm', () => {
             realmPath: testRealmPath3,
             schemaNames: [SCHEMA_1.name, 'non-existant schema name 1', SCHEMA_2.name, SCHEMA_3.name, SCHEMA_4.name, SCHEMA_5.name, SCHEMA_6.name, 'non-existant schema name 2'],
         });
-        expect(realm2.schema).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3, SCHEMA_4, SCHEMA_5, SCHEMA_6]);
+        expect(realm3.schema).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3, SCHEMA_4, SCHEMA_5, SCHEMA_6]);
     });
 
     it('Should open a realm, given a realm name', async () => {
