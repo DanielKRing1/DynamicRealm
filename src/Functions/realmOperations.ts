@@ -1,3 +1,5 @@
+import Realm from 'realm';
+
 import { DEFAULT_PATH } from '../Realm/constants';
 import { globalRealm } from '../Realm/gloabalRealm';
 import { DYNAMIC_REALM_NAME, DynamicRealm, DynamicSchema } from '../Schemas';
@@ -11,20 +13,13 @@ export async function init({ realmPath = DEFAULT_PATH }: InitParams = {}): Promi
 
 export async function loadRealm(realmName: string): Promise<Realm> {
     // 1. Get DynamicRealm
-    const realmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmName);
+    const dynamicRealmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmName);
 
     // 2. Get DynamicSchemas
-    const entries: DynamicSchemaProperties[] = getSchemas(realmSchema.schemaNames);
+    const schema: Realm.ObjectSchema[] = getSchemas(dynamicRealmSchema.schemaNames);
 
-    // 3. Map to Realm.ObjectSchemas
-    const schema: Realm.ObjectSchema[] = entries.map((entry: DynamicSchemaProperties) => ({
-        name: entry.name,
-        primaryKey: entry.primaryKey,
-        properties: JSON.parse(entry.schema),
-    }));
-
-    // 4. Open Realm
-    return Realm.open({ schema, path: realmSchema.realmPath, schemaVersion: realmSchema.schemaVersion });
+    // 3. Open Realm
+    return Realm.open({ schema, path: dynamicRealmSchema.realmPath, schemaVersion: dynamicRealmSchema.schemaVersion });
 }
 
 /**
@@ -37,15 +32,8 @@ export async function loadRealm(realmName: string): Promise<Realm> {
  */
 export async function loadRealmFromSchemas({ realmPath: path, schemaNames = [] }: LoadRealmParams): Promise<Realm> {
     // 1. Get DynamicSchemas
-    const entries: DynamicSchemaProperties[] = getSchemas(schemaNames);
+    const schema: Realm.ObjectSchema[] = getSchemas(schemaNames);
 
-    // 2. Map to Realm.ObjectSchemas
-    const schema: Realm.ObjectSchema[] = entries.map((entry: DynamicSchemaProperties) => ({
-        name: entry.name,
-        primaryKey: entry.primaryKey,
-        properties: JSON.parse(entry.schema),
-    }));
-
-    // 3. Open Realm
+    // 2. Open Realm
     return Realm.open({ schema, path });
 }

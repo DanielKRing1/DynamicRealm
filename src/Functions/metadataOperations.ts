@@ -1,9 +1,9 @@
 import { globalRealm } from '../Realm/gloabalRealm';
-import { getSchema } from './dynamicSchemaOperations';
+import { getSchema, _getDynamicSchema } from './dynamicSchemaOperations';
 
 export function getMetadata<R>(schemaName: string): R {
     // 1. Get schema
-    const schema: DynamicSchemaProperties = getSchema(schemaName);
+    const schema: DynamicSchemaProperties = _getDynamicSchema(schemaName);
 
     // 2. Convert metadat string to obj
     const metadataObj: any = JSON.parse(schema.metadata);
@@ -13,7 +13,7 @@ export function getMetadata<R>(schemaName: string): R {
 
 export function updateMetadata<R>(schemaName: string, updateHandler: (allMetaData: any) => R): R {
     // 1. Get schema
-    const schema: DynamicSchemaProperties = getSchema(schemaName);
+    const schema: DynamicSchemaProperties = _getDynamicSchema(schemaName);
 
     let result: R;
     globalRealm.getRealm().write(() => {
