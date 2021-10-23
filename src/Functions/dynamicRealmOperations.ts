@@ -9,7 +9,7 @@ import { DYNAMIC_REALM_NAME } from '../Schemas';
  */
 export function _rmRealmSchemaName(schema: DynamicSchemaProperties): void {
     // 1. Get DynamicRealm
-    const realmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, schema.realmName);
+    const realmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, schema.realmPath);
 
     // 2. Remove schema name from DynamicRealm
     if (realmSchema) {
@@ -21,9 +21,9 @@ export function _rmRealmSchemaName(schema: DynamicSchemaProperties): void {
     }
 }
 
-export function _incrementRealmSchemaVersion(realmName: string) {
+export function _incrementRealmSchemaVersion(realmPath: string) {
     // 1. Get DynamicRealm
-    const realmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmName);
+    const realmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmPath);
 
     // 2. Increment schemaVersion
     if (realmSchema) {

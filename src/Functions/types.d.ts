@@ -2,7 +2,6 @@ type InitParams = {
     realmPath?: string;
 };
 type SaveSchemaParams = {
-    realmName: string;
     realmPath: string;
     schema: Realm.ObjectSchema;
     metadataType?: string;

@@ -11,9 +11,9 @@ export async function init({ realmPath = DEFAULT_PATH }: InitParams = {}): Promi
     await globalRealm.openRealm(realmPath);
 }
 
-export async function loadRealm(realmName: string): Promise<Realm> {
+export async function loadRealm(realmPath: string): Promise<Realm> {
     // 1. Get DynamicRealm
-    const dynamicRealmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmName);
+    const dynamicRealmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmPath);
 
     // 2. Get DynamicSchemas
     const schema: Realm.ObjectSchema[] = getSchemas(dynamicRealmSchema.schemaNames);

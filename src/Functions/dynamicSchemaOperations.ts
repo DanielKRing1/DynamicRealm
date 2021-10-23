@@ -10,12 +10,12 @@ export const MetadataType: Dict<string> = {
     Object: 'object',
     List: 'list',
 };
-export function saveSchema({ realmName, realmPath, schema, metadataType = MetadataType.Object }: SaveSchemaParams): void {
+export function saveSchema({ realmPath, schema, metadataType = MetadataType.Object }: SaveSchemaParams): void {
     // 1. Create DynamicSchema object to save
     const schemaObj: DynamicSchemaProperties = {
         // 1.1. Record the 'name' property for simple querying
         name: schema.name,
-        realmName,
+        realmPath,
         // 1.2. Stringify the schema object
         schema: JSON.stringify(schema),
         // 1.3. Init the metadata as empty
@@ -26,19 +26,21 @@ export function saveSchema({ realmName, realmPath, schema, metadataType = Metada
         // 2. Check if schema already exists
         const existingSchema: DynamicSchemaProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_SCHEMA_NAME, schema.name);
 
-        // 3. If exists, increment DynamicRealm
-        if (existingSchema) _incrementRealmSchemaVersion(realmName);
+        // 3. If exists, remove Schema and increment DynamicRealm
+        if (existingSchema) {
+            rmSchema(schema.name);
+            _incrementRealmSchemaVersion(realmPath);
+        }
 
         // 4. Add the new schema to the DynamicSchema table
         globalRealm.getRealm().create(DYNAMIC_SCHEMA_NAME, schemaObj);
 
         // 5. Check if DynamicRealm exists
-        let realmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmName);
+        let realmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmPath);
         // 5.1. Create DynamicRealm object if not exists
         if (!realmSchema) {
             // // 5.1.1. Create object
             const realmSchemaObj: DynamicRealmProperties = {
-                name: realmName,
                 realmPath,
                 // Empty
                 schemaNames: [],
@@ -84,10 +86,10 @@ export function getSchemas(schemaNames: string[] = []): Realm.ObjectSchema[] {
 export function rmSchema(schemaName: string): boolean {
     let schemaExists = false;
 
-    globalRealm.getRealm().write(() => {
-        // 1. Get schema to delete
-        const schema: DynamicSchemaProperties = _getDynamicSchema(schemaName);
+    // 1. Get schema to delete
+    const schema: DynamicSchemaProperties = _getDynamicSchema(schemaName);
 
+    globalRealm.getRealm().write(() => {
         // 2. Schema exists
         if (schema) {
             // 2.1. Mark as exists

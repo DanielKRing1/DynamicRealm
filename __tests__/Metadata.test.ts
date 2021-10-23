@@ -7,8 +7,6 @@ import { MetadataType } from '../src/Functions/dynamicSchemaOperations';
 
 const REALM_PATH_1 = 'RealmPath1.path';
 
-const REALM_NAME_1 = 'Realm1';
-
 const SCHEMA_1: Realm.ObjectSchema = {
     name: 'Schema1',
     primaryKey: 'name',
@@ -18,7 +16,6 @@ const SCHEMA_1: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_1: SaveSchemaParams = {
-    realmName: REALM_NAME_1,
     realmPath: REALM_PATH_1,
     schema: SCHEMA_1,
 };
@@ -32,7 +29,6 @@ const SCHEMA_2: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_2: SaveSchemaParams = {
-    realmName: REALM_NAME_1,
     realmPath: REALM_PATH_1,
     schema: SCHEMA_2,
     metadataType: MetadataType.List,

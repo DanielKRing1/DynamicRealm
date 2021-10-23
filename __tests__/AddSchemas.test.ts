@@ -2,10 +2,6 @@ jest.mock('realm');
 
 import DynamicRealm from '../src';
 
-const REALM_NAME_1 = 'Realm1';
-const REALM_NAME_2 = 'Realm2';
-const REALM_NAME_3 = 'Realm3';
-
 const REALM_PATH_1 = 'RealmPath1.path';
 const REALM_PATH_2 = 'RealmPath2.path';
 
@@ -18,13 +14,11 @@ const SCHEMA_1: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_1: SaveSchemaParams = {
-    realmName: REALM_NAME_1,
     realmPath: REALM_PATH_1,
     schema: SCHEMA_1,
 };
 const SCHEMA_1_EXPECTED_ROW = {
     name: SCHEMA_1.name,
-    realmName: SCHEMA_PARAMS_1.realmName,
     schema: JSON.stringify(SCHEMA_1),
     metadata: '{}',
 };
@@ -38,13 +32,11 @@ const SCHEMA_2: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_2: SaveSchemaParams = {
-    realmName: REALM_NAME_1,
     realmPath: REALM_PATH_1,
     schema: SCHEMA_2,
 };
 const SCHEMA_2_EXPECTED_ROW = {
     name: SCHEMA_2.name,
-    realmName: SCHEMA_PARAMS_2.realmName,
     schema: JSON.stringify(SCHEMA_2),
     metadata: '{}',
 };
@@ -58,13 +50,11 @@ const SCHEMA_3: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_3: SaveSchemaParams = {
-    realmName: REALM_NAME_1,
     realmPath: REALM_PATH_1,
     schema: SCHEMA_3,
 };
 const SCHEMA_3_EXPECTED_ROW = {
     name: SCHEMA_3.name,
-    realmName: SCHEMA_PARAMS_3.realmName,
     schema: JSON.stringify(SCHEMA_3),
     metadata: '{}',
 };
@@ -78,18 +68,15 @@ const SCHEMA_4: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_4: SaveSchemaParams = {
-    realmName: REALM_NAME_2,
     realmPath: REALM_PATH_2,
     schema: SCHEMA_4,
 };
 const SCHEMA_4_EXPECTED_ROW = {
     name: SCHEMA_4.name,
-    realmName: SCHEMA_PARAMS_4.realmName,
     schema: JSON.stringify(SCHEMA_4),
     metadata: '{}',
 };
 
-const REALM_NAME_SCHEMA_5 = REALM_NAME_2;
 const SCHEMA_5: Realm.ObjectSchema = {
     name: 'Schema5',
     primaryKey: 'name',
@@ -99,18 +86,15 @@ const SCHEMA_5: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_5: SaveSchemaParams = {
-    realmName: REALM_NAME_2,
     realmPath: REALM_PATH_2,
     schema: SCHEMA_5,
 };
 const SCHEMA_5_EXPECTED_ROW = {
     name: SCHEMA_5.name,
-    realmName: SCHEMA_PARAMS_5.realmName,
     schema: JSON.stringify(SCHEMA_5),
     metadata: '{}',
 };
 
-const REALM_NAME_SCHEMA_6 = REALM_NAME_3;
 const SCHEMA_6: Realm.ObjectSchema = {
     name: 'Schema6',
     primaryKey: 'name',
@@ -120,13 +104,11 @@ const SCHEMA_6: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_6: SaveSchemaParams = {
-    realmName: REALM_NAME_2,
     realmPath: REALM_PATH_2,
     schema: SCHEMA_6,
 };
 const SCHEMA_6_EXPECTED_ROW = {
     name: SCHEMA_6.name,
-    realmName: SCHEMA_PARAMS_6.realmName,
     schema: JSON.stringify(SCHEMA_6),
     metadata: '{}',
 };

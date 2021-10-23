@@ -5,7 +5,6 @@ export const DynamicSchema: Realm.ObjectSchema = {
     properties: {
         name: 'string',
         primaryKey: 'string',
-        realmName: 'string',
         schema: 'string',
         metadata: 'string',
     },
@@ -14,9 +13,8 @@ export const DynamicSchema: Realm.ObjectSchema = {
 export const DYNAMIC_REALM_NAME: string = 'Realms';
 export const DynamicRealm: Realm.ObjectSchema = {
     name: DYNAMIC_REALM_NAME,
-    primaryKey: 'name',
+    primaryKey: 'realmPath',
     properties: {
-        name: 'string',
         realmPath: 'string',
         schemaNames: 'string[]',
         schemaVersion: { type: 'int', default: 0 },
