@@ -1,4 +1,4 @@
-export const DYNAMIC_SCHEMA_NAME: string = 'Dynamic';
+export const DYNAMIC_SCHEMA_NAME: string = 'DynamicSchemas';
 export const DynamicSchema: Realm.ObjectSchema = {
     name: DYNAMIC_SCHEMA_NAME,
     primaryKey: 'name',
@@ -9,7 +9,7 @@ export const DynamicSchema: Realm.ObjectSchema = {
     },
 };
 
-export const DYNAMIC_REALM_NAME: string = 'Realms';
+export const DYNAMIC_REALM_NAME: string = 'DynamicRealms';
 export const DynamicRealm: Realm.ObjectSchema = {
     name: DYNAMIC_REALM_NAME,
     primaryKey: 'realmPath',

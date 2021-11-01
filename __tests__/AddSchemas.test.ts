@@ -1,6 +1,7 @@
 jest.mock('realm');
 
 import DynamicRealm from '../src';
+import { globalRealm } from '../src/Realm/gloabalRealm';
 
 const REALM_PATH_1 = 'RealmPath1.path';
 const REALM_PATH_2 = 'RealmPath2.path';
@@ -197,5 +198,7 @@ describe('Adding new schemas via DynamicRealm', () => {
             SCHEMA_5,
             SCHEMA_6,
         ]);
+
+        console.log(globalRealm.getRealm());
     });
 });
