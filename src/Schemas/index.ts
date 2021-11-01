@@ -4,7 +4,6 @@ export const DynamicSchema: Realm.ObjectSchema = {
     primaryKey: 'name',
     properties: {
         name: 'string',
-        primaryKey: 'string',
         schema: 'string',
         metadata: 'string',
     },
