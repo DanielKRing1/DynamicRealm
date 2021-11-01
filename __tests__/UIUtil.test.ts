@@ -102,6 +102,8 @@ describe('DynamicRealm', () => {
 
         await DynamicRealm.init({ realmPath });
 
+        expect(DynamicRealm.getSchemaNames()).toEqual([]);
+
         DynamicRealm.saveSchemas([SCHEMA_PARAMS_1, SCHEMA_PARAMS_2, SCHEMA_PARAMS_3, SCHEMA_PARAMS_4, SCHEMA_PARAMS_5, SCHEMA_PARAMS_6]);
 
         expect(DynamicRealm.getSchemaNames(REALM_PATH_1)).toEqual([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_3.name]);
