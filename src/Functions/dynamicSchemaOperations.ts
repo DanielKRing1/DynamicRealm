@@ -1,6 +1,6 @@
 import { globalRealm } from '../Realm/gloabalRealm';
-import { DYNAMIC_SCHEMA_NAME, DYNAMIC_REALM_NAME } from '../Schemas';
-import { _incrementRealmSchemaVersion, _rmRealmSchemaName } from './dynamicRealmOperations';
+import { DYNAMIC_SCHEMA_NAME } from '../Schemas';
+import { getDynamicRealm, _incrementRealmSchemaVersion, _rmRealmSchemaName } from './dynamicRealmOperations';
 
 export function saveSchemas(params: SaveSchemaParams[]) {
     params.forEach((param: SaveSchemaParams) => saveSchema(param));
@@ -35,24 +35,11 @@ export function saveSchema({ realmPath, schema, metadataType = MetadataType.Obje
         // 4. Add the new schema to the DynamicSchema table
         globalRealm.getRealm().create(DYNAMIC_SCHEMA_NAME, schemaObj);
 
-        // 5. Check if DynamicRealm exists
-        let realmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmPath);
-        // 5.1. Create DynamicRealm object if not exists
-        if (!realmSchema) {
-            // // 5.1.1. Create object
-            const realmSchemaObj: DynamicRealmProperties = {
-                realmPath,
-                // Empty
-                schemaNames: [],
-                schemaVersion: 0,
-            };
-
-            // // 5.1.2. Save
-            realmSchema = globalRealm.getRealm().create(DYNAMIC_REALM_NAME, realmSchemaObj);
-        }
+        // 5. Get or create the DynamicRealm
+        const dynamicRealm: DynamicRealmProperties = getDynamicRealm(realmPath);
 
         // 6. Add new DynamicSchema's name to DynamicRealm
-        realmSchema.schemaNames.push(schema.name);
+        dynamicRealm.schemaNames.push(schema.name);
     });
 }
 
@@ -79,7 +66,8 @@ export function getSchema(schemaName: string): Realm.ObjectSchema {
  *                      will return all schemas if not provided
  * @returns
  */
-export function getSchemas(schemaNames: string[] = []): Realm.ObjectSchema[] {
+export function getSchemas(schemaNames: string[] = undefined): Realm.ObjectSchema[] {
+    if (!schemaNames) schemaNames = [];
     return _getDynamicSchemas(schemaNames).map((dynamicSchema: DynamicSchemaProperties) => JSON.parse(dynamicSchema.schema));
 }
 

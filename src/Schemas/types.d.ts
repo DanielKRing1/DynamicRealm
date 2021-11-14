@@ -9,3 +9,8 @@ type DynamicRealmProperties = {
     schemaNames: string[];
     schemaVersion: number;
 };
+type OptionalDynamicRealmProperties = {
+    realmPath?: string;
+    schemaNames?: string[];
+    schemaVersion?: number;
+};

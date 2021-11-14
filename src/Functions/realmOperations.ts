@@ -2,7 +2,7 @@ import Realm from 'realm';
 
 import { DEFAULT_PATH } from '../Realm/constants';
 import { globalRealm } from '../Realm/gloabalRealm';
-import { DYNAMIC_REALM_NAME, DynamicRealm, DynamicSchema } from '../Schemas';
+import { getDynamicRealm_wr } from './dynamicRealmOperations';
 import { getSchemas } from './dynamicSchemaOperations';
 
 export async function init({ realmPath = DEFAULT_PATH }: InitParams = {}): Promise<void> {
@@ -13,13 +13,13 @@ export async function init({ realmPath = DEFAULT_PATH }: InitParams = {}): Promi
 
 export async function loadRealm(realmPath: string): Promise<Realm> {
     // 1. Get DynamicRealm
-    const dynamicRealmSchema: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmPath);
+    const dynamicRealm: DynamicRealmProperties = getDynamicRealm_wr(realmPath);
 
     // 2. Get DynamicSchemas
-    const schema: Realm.ObjectSchema[] = getSchemas(dynamicRealmSchema.schemaNames);
+    const schema: Realm.ObjectSchema[] = getSchemas(dynamicRealm.schemaNames);
 
     // 3. Open Realm
-    return Realm.open({ schema, path: dynamicRealmSchema.realmPath, schemaVersion: dynamicRealmSchema.schemaVersion });
+    return Realm.open({ schema, path: dynamicRealm.realmPath, schemaVersion: dynamicRealm.schemaVersion });
 }
 
 /**

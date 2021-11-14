@@ -11,7 +11,7 @@ describe('GlobalRealm', () => {
     it('Should throw an error and have a null realm before being initialized', async () => {
         expect(() => globalRealm.getRealm()).toThrowError(INIT_ERROR);
 
-        expect(globalRealm.dynamicRealm).toBeNull();
+        expect(globalRealm.dynamicRealm_Realm).toBeNull();
     });
 
     it('Should own a DynamicRealm instance after being initialized', async () => {
