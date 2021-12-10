@@ -10,22 +10,23 @@ export const MetadataType: Dict<string> = {
     Object: 'object',
     List: 'list',
 };
-export function saveSchema({ realmPath, schema, metadataType = MetadataType.Object }: SaveSchemaParams): void {
-    // 1. Create DynamicSchema object to save
+export function saveSchema({ realmPath, schema, overwrite = false, metadataType = MetadataType.Object }: SaveSchemaParams): void {
+    // 1. Check if schema already exists
+    const existingSchema: DynamicSchemaProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_SCHEMA_NAME, schema.name);
+    if(existingSchema && !overwrite) return;
+
+    // 2. Create DynamicSchema object to save
     const schemaObj: DynamicSchemaProperties = {
-        // 1.1. Record the 'name' property for simple querying
+        // 2.1. Record the 'name' property for simple querying
         name: schema.name,
         realmPath,
-        // 1.2. Stringify the schema object
+        // 2.2. Stringify the schema object
         schema: JSON.stringify(schema),
-        // 1.3. Init the metadata as empty
+        // 2.3. Init the metadata as empty
         metadata: metadataType === MetadataType.Object ? '{}' : '[]',
     };
 
     globalRealm.getRealm().write(() => {
-        // 2. Check if schema already exists
-        const existingSchema: DynamicSchemaProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_SCHEMA_NAME, schema.name);
-
         // 3. If exists, remove Schema and increment DynamicRealm
         if (existingSchema) {
             rmSchema(schema.name);
