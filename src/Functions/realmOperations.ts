@@ -5,7 +5,16 @@ import { globalRealm } from '../Realm/gloabalRealm';
 import { getDynamicRealm_wr } from './dynamicRealmOperations';
 import { getSchemas } from './dynamicSchemaOperations';
 
-export async function init({ realmPath = DEFAULT_PATH }: InitParams = {}): Promise<void> {
+let _isInitialized: boolean = false;
+
+export function isInitialized() {
+    return _isInitialized;
+}
+
+export async function init({ realmPath = DEFAULT_PATH, force = false }: InitParams = {}): Promise<void> {
+    // Do not re-initialize
+    if(_isInitialized && !force) return;
+
     // 1. Open a realm containing only the DynamicSchema and
     // Store realm in global wrapper
     await globalRealm.openRealm(realmPath);
