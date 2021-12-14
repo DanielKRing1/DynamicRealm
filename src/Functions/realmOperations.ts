@@ -18,6 +18,9 @@ export async function init({ realmPath = DEFAULT_PATH, force = false }: InitPara
     // 1. Open a realm containing only the DynamicSchema and
     // Store realm in global wrapper
     await globalRealm.openRealm(realmPath);
+
+    // 2. Set initialized
+    _isInitialized = true;
 }
 
 export async function loadRealm(realmPath: string): Promise<Realm> {
