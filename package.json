@@ -10,7 +10,7 @@
     "scripts": {
         "test": "npm run build && npx jest",
         "build": "tsc -p tsconfig-build.json",
-        "publish": "npm run build && npm version && npm publish && git add . && git commit -m \"New npm version\""
+        "publish": "git add . && git commit -m \"New npm version\""
     },
     "author": "",
     "license": "ISC",
