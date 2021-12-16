@@ -1,4 +1,5 @@
 import { METADATA_ARRAY_INTEGER_ERROR } from '../Errors';
+import { KeyValuePair } from '../types/types';
 import { DefaultMetadataHandlers } from './types/types';
 
 // For array data
