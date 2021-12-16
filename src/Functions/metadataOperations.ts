@@ -1,4 +1,5 @@
 import { globalRealm } from '../Realm/gloabalRealm';
+import { DynamicSchemaProperties } from '../Schemas/types/types';
 import { getSchema, _getDynamicSchema } from './dynamicSchemaOperations';
 
 export function getMetadata<R>(schemaName: string): R {
