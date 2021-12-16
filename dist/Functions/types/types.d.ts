@@ -1,14 +1,14 @@
-type InitParams = {
+export declare type InitParams = {
     realmPath?: string;
     force?: boolean;
 };
-type SaveSchemaParams = {
+export declare type SaveSchemaParams = {
     realmPath: string;
     schema: Realm.ObjectSchema;
     overwrite?: boolean;
     metadataType?: string;
 };
-type LoadRealmParams = {
+export declare type LoadRealmParams = {
     realmPath: string;
     schemaNames: string[];
 };

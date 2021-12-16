@@ -1,3 +1,4 @@
+import { SaveSchemaParams } from './types/types';
 export declare function saveSchemas(params: SaveSchemaParams[]): void;
 export declare const MetadataType: Dict<string>;
 export declare function saveSchema({ realmPath, schema, overwrite, metadataType }: SaveSchemaParams): void;

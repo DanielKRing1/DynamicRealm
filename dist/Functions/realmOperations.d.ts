@@ -1,4 +1,5 @@
 import Realm from 'realm';
+import { InitParams, LoadRealmParams } from './types/types';
 export declare function isInitialized(): boolean;
 export declare function init({ realmPath, force }?: InitParams): Promise<void>;
 export declare function loadRealm(realmPath: string): Promise<Realm>;

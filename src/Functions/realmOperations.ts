@@ -4,6 +4,7 @@ import { DEFAULT_PATH } from '../Realm/constants';
 import { globalRealm } from '../Realm/gloabalRealm';
 import { getDynamicRealm_wr } from './dynamicRealmOperations';
 import { getSchemas } from './dynamicSchemaOperations';
+import { InitParams, LoadRealmParams } from './types/types';
 
 let _isInitialized: boolean = false;
 

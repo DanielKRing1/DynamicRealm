@@ -18,7 +18,7 @@ declare const _default: {
     getRealmNames: typeof getRealmNames;
     getSchemaNames: typeof getSchemaNames;
     getProperties: typeof getProperties;
-    ARRAY_METADATA_HANDLERS: DefaultMetadataHandlers;
-    DICT_METADATA_HANDLERS: DefaultMetadataHandlers;
+    ARRAY_METADATA_HANDLERS: import("./Metadata/types/types").DefaultMetadataHandlers;
+    DICT_METADATA_HANDLERS: import("./Metadata/types/types").DefaultMetadataHandlers;
 };
 export default _default;

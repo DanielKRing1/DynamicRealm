@@ -1,4 +1,5 @@
 import { METADATA_ARRAY_INTEGER_ERROR } from '../Errors';
+import { DefaultMetadataHandlers } from './types/types';
 
 // For array data
 export const ARRAY_METADATA_HANDLERS: DefaultMetadataHandlers = {

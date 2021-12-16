@@ -1,6 +1,7 @@
 import { globalRealm } from '../Realm/gloabalRealm';
 import { DYNAMIC_SCHEMA_NAME } from '../Schemas';
 import { getDynamicRealm, _incrementRealmSchemaVersion, _rmRealmSchemaName } from './dynamicRealmOperations';
+import { SaveSchemaParams } from './types/types';
 
 export function saveSchemas(params: SaveSchemaParams[]) {
     params.forEach((param: SaveSchemaParams) => saveSchema(param));
