@@ -1,15 +1,15 @@
-type DynamicSchemaProperties = {
+export type DynamicSchemaProperties = {
     name: string;
     realmPath: string;
     schema: string;
     metadata: string;
 };
-type DynamicRealmProperties = {
+export type DynamicRealmProperties = {
     realmPath: string;
     schemaNames: string[];
     schemaVersion: number;
 };
-type OptionalDynamicRealmProperties = {
+export type OptionalDynamicRealmProperties = {
     realmPath?: string;
     schemaNames?: string[];
     schemaVersion?: number;
