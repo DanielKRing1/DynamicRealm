@@ -1,0 +1,24 @@
+import { saveSchema, saveSchemas, getSchema, getSchemas, rmSchema, rmSchemas } from './Functions/dynamicSchemaOperations';
+import { getMetadata, updateMetadata } from './Functions/metadataOperations';
+import { init, isInitialized, loadRealm, loadRealmFromSchemas } from './Functions/realmOperations';
+import { getRealmNames, getSchemaNames, getProperties } from './Functions/uiUtils';
+declare const _default: {
+    init: typeof init;
+    isInitialized: typeof isInitialized;
+    saveSchema: typeof saveSchema;
+    saveSchemas: typeof saveSchemas;
+    getSchema: typeof getSchema;
+    getSchemas: typeof getSchemas;
+    rmSchema: typeof rmSchema;
+    rmSchemas: typeof rmSchemas;
+    loadRealm: typeof loadRealm;
+    loadRealmFromSchemas: typeof loadRealmFromSchemas;
+    getMetadata: typeof getMetadata;
+    updateMetadata: typeof updateMetadata;
+    getRealmNames: typeof getRealmNames;
+    getSchemaNames: typeof getSchemaNames;
+    getProperties: typeof getProperties;
+    ARRAY_METADATA_HANDLERS: DefaultMetadataHandlers;
+    DICT_METADATA_HANDLERS: DefaultMetadataHandlers;
+};
+export default _default;
