@@ -1,6 +1,7 @@
 import { CREATE_DYNAMIC_REALM_SCHEMA } from '../Realm/constants';
 import { globalRealm } from '../Realm/gloabalRealm';
 import { DYNAMIC_REALM_NAME } from '../Schemas';
+import { DynamicRealmProperties, DynamicSchemaProperties } from '../Schemas/types/types';
 
 /**
  * Opens a write transaction

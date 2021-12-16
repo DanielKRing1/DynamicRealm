@@ -1,3 +1,5 @@
+import { DynamicRealmProperties, OptionalDynamicRealmProperties } from "../Schemas/types/types";
+
 export const DEFAULT_PATH: string = 'DynamicRealm.path';
 export const DEFAULT_DYNAMIC_REALM_SCHEMA: DynamicRealmProperties = {
     realmPath: DEFAULT_PATH,

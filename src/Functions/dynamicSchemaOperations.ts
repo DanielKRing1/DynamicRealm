@@ -1,5 +1,6 @@
 import { globalRealm } from '../Realm/gloabalRealm';
 import { DYNAMIC_SCHEMA_NAME } from '../Schemas';
+import { DynamicSchemaProperties, DynamicRealmProperties } from '../Schemas/types/types';
 import { getDynamicRealm, _incrementRealmSchemaVersion, _rmRealmSchemaName } from './dynamicRealmOperations';
 import { SaveSchemaParams } from './types/types';
 
