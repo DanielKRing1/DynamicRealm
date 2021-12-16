@@ -10,7 +10,7 @@
     "scripts": {
         "test": "npm run build && npx jest",
         "build": "tsc -p tsconfig-build.json",
-        "build:commit": "git add . && git commit -m \"New build\"",
+        "build:commit": "npm run commit -- \"New build\"",
         "patch": "npm version patch",
         "commit": "git add . && git commit -m ",
         "push": "git push origin main",
