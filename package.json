@@ -13,7 +13,7 @@
         "patch": "npm version patch",
         "commit": "git add . && git commit -m ",
         "push": "git push origin main",
-        "pub": "npm run build && npm run commit -- \"New build\" && npm run patch && npm publish && npm run push"
+        "pub": "npm run build && npm run commit -- \"New build\" && npm run patch && npm run push && npm publish"
     },
     "author": "",
     "license": "ISC",
