@@ -1,8 +1,8 @@
 {
-    "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs",
-        "esModuleInterop": true,
-        "types": ["jest", "node"]
-    }
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "types": ["jest", "node"]
+  }
 }
