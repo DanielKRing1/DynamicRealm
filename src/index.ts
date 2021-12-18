@@ -4,6 +4,11 @@ import { init, isInitialized, loadRealm, loadRealmFromSchemas } from './Function
 import { getRealmNames, getSchemaNames, getProperties } from './Functions/uiUtils';
 import { ARRAY_METADATA_HANDLERS, DICT_METADATA_HANDLERS } from './Metadata/defaultHandlers';
 
+export * from './Functions/types/types';
+export * from './Metadata/types/types';
+export * from './Schemas/types/types';
+export * from './types/types';
+
 export default {
     init,
     isInitialized,

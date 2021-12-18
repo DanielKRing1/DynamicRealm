@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
     "target": "es5",
-    // "module": "commonjs",
+    "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "lib": ["es6", "es2015"],
     "types": ["jest", "node"],
     "declaration": true,
-    "module": "AMD",
-    "outFile": "dist/index.js",
+    "outDir": "dist",
     "rootDir": "src"
   },
   "paths": {
