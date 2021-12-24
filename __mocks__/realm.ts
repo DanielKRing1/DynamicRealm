@@ -1,5 +1,7 @@
 // TYPES
 
+import { Dict } from "../src";
+
 type Schema = {
     name: string;
     primaryKey?: string;

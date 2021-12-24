@@ -13,6 +13,12 @@ export function isInitialized() {
     return _isInitialized;
 }
 
+/**
+ * Open meta Realm that tracks existing Realm schemas
+ * 
+ * @param param0 
+ * @returns 
+ */
 export async function init({ realmPath = DEFAULT_PATH, force = false }: InitParams = {}): Promise<void> {
     // Do not re-initialize
     if(_isInitialized && !force) return;
