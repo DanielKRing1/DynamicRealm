@@ -2,7 +2,7 @@ jest.mock('realm');
 
 import Realm from 'realm';
 
-import DynamicRealm from '../src';
+import DynamicRealm, { SaveSchemaParams } from '../src';
 
 const REALM_PATH_1 = 'RealmPath1.path';
 const REALM_PATH_2 = 'RealmPath2.path';
@@ -92,6 +92,8 @@ describe('DynamicRealm', () => {
 
         await DynamicRealm.init({ realmPath });
 
+        expect(DynamicRealm.getSchemaNames()).toEqual([]);
+
         DynamicRealm.saveSchemas([SCHEMA_PARAMS_1, SCHEMA_PARAMS_2, SCHEMA_PARAMS_3, SCHEMA_PARAMS_4, SCHEMA_PARAMS_5, SCHEMA_PARAMS_6]);
 
         expect(DynamicRealm.getRealmNames()).toEqual([REALM_PATH_1, REALM_PATH_2, REALM_PATH_3]);
@@ -101,8 +103,6 @@ describe('DynamicRealm', () => {
         const realmPath = 'CustomRealmPath.path';
 
         await DynamicRealm.init({ realmPath });
-
-        expect(DynamicRealm.getSchemaNames()).toEqual([]);
 
         DynamicRealm.saveSchemas([SCHEMA_PARAMS_1, SCHEMA_PARAMS_2, SCHEMA_PARAMS_3, SCHEMA_PARAMS_4, SCHEMA_PARAMS_5, SCHEMA_PARAMS_6]);
 
@@ -125,5 +125,7 @@ describe('DynamicRealm', () => {
         expect(DynamicRealm.getProperties(SCHEMA_4.name)).toEqual(SCHEMA_4.properties);
         expect(DynamicRealm.getProperties(SCHEMA_5.name)).toEqual(SCHEMA_5.properties);
         expect(DynamicRealm.getProperties(SCHEMA_6.name)).toEqual(SCHEMA_6.properties);
+
+        console.log(DynamicRealm.getProperties(SCHEMA_1.name));
     });
 });
