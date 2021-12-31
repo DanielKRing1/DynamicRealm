@@ -51,8 +51,11 @@ export function _getDynamicSchema(schemaName: string): DynamicSchemaProperties {
     return globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_SCHEMA_NAME, schemaName);
 }
 
-export function _getDynamicSchemas(schemaNames: string[] = []): DynamicSchemaProperties[] {
-    if (schemaNames.length === 0) return Array.from(globalRealm.getRealm().objects(DYNAMIC_SCHEMA_NAME));
+export function _getDynamicSchemas(schemaNames: string[]): DynamicSchemaProperties[] {
+    // console.log('here7');
+    if (!schemaNames) {
+        return Array.from(globalRealm.getRealm().objects(DYNAMIC_SCHEMA_NAME));
+    }
 
     return schemaNames.map((schemaName: string) => _getDynamicSchema(schemaName)).filter((dynamicSchema: DynamicSchemaProperties) => !!dynamicSchema);
 }
@@ -71,7 +74,6 @@ export function getSchema(schemaName: string): Realm.ObjectSchema {
  * @returns
  */
 export function getSchemas(schemaNames: string[] = undefined): Realm.ObjectSchema[] {
-    if (!schemaNames) schemaNames = [];
     return _getDynamicSchemas(schemaNames).map((dynamicSchema: DynamicSchemaProperties) => JSON.parse(dynamicSchema.schema));
 }
 

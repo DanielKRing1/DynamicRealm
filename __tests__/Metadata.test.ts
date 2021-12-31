@@ -2,7 +2,7 @@ jest.mock('realm');
 
 import Realm from 'realm';
 
-import DynamicRealm from '../src';
+import DynamicRealm, { SaveSchemaParams } from '../src';
 import { MetadataType } from '../src/Functions/dynamicSchemaOperations';
 
 const REALM_PATH_1 = 'RealmPath1.path';
@@ -56,10 +56,10 @@ const SCHEMA_2_METADATA_1 = 'Schema2 Metadata1';
 const SCHEMA_2_METADATA_2 = 'Schema2 Metadata2';
 const SCHEMA_2_METADATA_3 = 'Schema2 Metadata3';
 
+const realmPath = 'CustomRealmPath.path';
+
 describe('Metadata', () => {
     it('Should be addable as an object', async () => {
-        const realmPath = 'CustomRealmPath.path';
-
         await DynamicRealm.init({ realmPath });
 
         DynamicRealm.saveSchemas([SCHEMA_PARAMS_1, SCHEMA_PARAMS_2]);
@@ -103,10 +103,6 @@ describe('Metadata', () => {
     });
 
     it('Should be addable as an array', async () => {
-        const realmPath = 'CustomRealmPath.path';
-
-        await DynamicRealm.init({ realmPath });
-
         DynamicRealm.saveSchemas([SCHEMA_PARAMS_1, SCHEMA_PARAMS_2]);
 
         let allMetadata: any[];
@@ -130,6 +126,10 @@ describe('Metadata', () => {
         expect(allMetadata).toEqual([SCHEMA_2_METADATA_1, SCHEMA_2_METADATA_2, SCHEMA_2_METADATA_3]);
         expect(DynamicRealm.getMetadata(SCHEMA_2.name)).toEqual([SCHEMA_2_METADATA_1, SCHEMA_2_METADATA_2, SCHEMA_2_METADATA_3]);
 
-        expect(DynamicRealm.getMetadata(SCHEMA_1.name)).toEqual({});
+        expect(DynamicRealm.getMetadata(SCHEMA_1.name)).toEqual({
+            [SCHEMA_1_METADATA_1_KEY]: SCHEMA_1_METADATA_1,
+            [SCHEMA_1_METADATA_2_KEY]: SCHEMA_1_METADATA_2,
+            [SCHEMA_1_METADATA_3_KEY]: SCHEMA_1_METADATA_3,
+        });
     });
 });

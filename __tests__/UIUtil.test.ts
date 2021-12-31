@@ -7,6 +7,7 @@ import DynamicRealm, { SaveSchemaParams } from '../src';
 const REALM_PATH_1 = 'RealmPath1.path';
 const REALM_PATH_2 = 'RealmPath2.path';
 const REALM_PATH_3 = 'RealmPath3.path';
+const UNKNOWN_REALM_PATH: string = 'UNKNOWN_REALM_PATH.path';
 
 const SCHEMA_1: Realm.ObjectSchema = {
     name: 'Schema1',
@@ -127,5 +128,9 @@ describe('DynamicRealm', () => {
         expect(DynamicRealm.getProperties(SCHEMA_6.name)).toEqual(SCHEMA_6.properties);
 
         console.log(DynamicRealm.getProperties(SCHEMA_1.name));
+    });
+
+    it('Should return an empty array for an unknown realm path', () => {
+        expect(DynamicRealm.getSchemaNames(UNKNOWN_REALM_PATH)).toEqual([]);
     });
 });
