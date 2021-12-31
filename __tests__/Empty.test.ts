@@ -2,10 +2,7 @@ jest.mock('realm');
 
 import Realm from 'realm';
 
-import { globalRealm } from '../src/Realm/gloabalRealm';
-
 import DynamicRealm from '../src';
-import { INIT_ERROR } from '../src/Errors';
 
 describe('A DynamicRealm with no saved schemas', () => {
     it('Return an empty array of realm names', async () => {

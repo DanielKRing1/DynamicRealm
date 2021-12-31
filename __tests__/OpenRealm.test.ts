@@ -2,7 +2,7 @@ jest.mock('realm');
 
 import Realm from 'realm';
 
-import DynamicRealm from '../src';
+import DynamicRealm, { SaveSchemaParams } from '../src';
 
 const REALM_PATH_1 = 'RealmPath1.path';
 const REALM_PATH_2 = 'RealmPath2.path';
