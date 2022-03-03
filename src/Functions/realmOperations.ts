@@ -1,7 +1,7 @@
 import Realm from 'realm';
 
 import { DEFAULT_PATH } from '../Realm/constants';
-import { globalRealm } from '../Realm/gloabalRealm';
+import { globalRealm } from '../Realm/globalRealm';
 import { DynamicRealmProperties } from '../Schemas/types/types';
 import { getDynamicRealm_wr } from './dynamicRealmOperations';
 import { getSchemas } from './dynamicSchemaOperations';

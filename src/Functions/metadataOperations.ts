@@ -1,4 +1,4 @@
-import { globalRealm } from '../Realm/gloabalRealm';
+import { globalRealm } from '../Realm/globalRealm';
 import { DynamicSchemaProperties } from '../Schemas/types/types';
 import { getSchema, _getDynamicSchema } from './dynamicSchemaOperations';
 

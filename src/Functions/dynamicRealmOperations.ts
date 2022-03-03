@@ -1,5 +1,5 @@
 import { CREATE_DYNAMIC_REALM_SCHEMA } from '../Realm/constants';
-import { globalRealm } from '../Realm/gloabalRealm';
+import { globalRealm } from '../Realm/globalRealm';
 import { DYNAMIC_REALM_NAME } from '../Schemas';
 import { DynamicRealmProperties, DynamicSchemaProperties } from '../Schemas/types/types';
 

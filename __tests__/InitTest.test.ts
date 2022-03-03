@@ -2,7 +2,7 @@ jest.mock('realm');
 
 import Realm from 'realm';
 
-import { globalRealm } from '../src/Realm/gloabalRealm';
+import { globalRealm } from '../src/Realm/globalRealm';
 
 import DynamicRealm from '../src';
 import { INIT_ERROR } from '../src/Errors';
