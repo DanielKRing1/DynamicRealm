@@ -1,4 +1,4 @@
-import { saveSchema, saveSchemas, getSchema, getSchemas, rmSchema, rmSchemas } from './Functions/dynamicSchemaOperations';
+import { saveSchema, saveSchemas, getSchema, getSchemas, rmSchema, rmSchemas } from './Functions/metaSchemaOperations';
 import { getMetadata, updateMetadata } from './Functions/metadataOperations';
 import { init, isInitialized, loadRealm, loadRealmFromSchemas } from './Functions/realmOperations';
 import { getRealmNames, getSchemaNames, getProperties } from './Functions/uiUtils';

@@ -1,6 +1,6 @@
 jest.mock('realm');
 
-import DynamicRealm, { SaveSchemaParams } from '../src';
+import MetaRealm, { SaveSchemaParams } from '../src';
 import { globalRealm } from '../src/Realm/globalRealm';
 
 const REALM_PATH_1 = 'RealmPath1.path';
@@ -114,17 +114,17 @@ const SCHEMA_6_EXPECTED_ROW = {
     metadata: '{}',
 };
 
-describe('Getting schemas via DynamicRealm before adding any schemas', () => {
+describe('Getting schemas via MetaRealm before adding any schemas', () => {
     beforeAll(() => {
         const realmPath = 'CustomRealmPath.path';
 
-        DynamicRealm.init({ realmPath });
+        MetaRealm.init({ realmPath });
     });
 
     it('Should return an empty array', () => {
         // Tests
-        expect(DynamicRealm.getSchema(SCHEMA_1.name)).toEqual(undefined);
-        expect(DynamicRealm.getSchemas()).toEqual([]);
+        expect(MetaRealm.getSchema(SCHEMA_1.name)).toEqual(undefined);
+        expect(MetaRealm.getSchemas()).toEqual([]);
     });
 });
 
@@ -132,16 +132,16 @@ describe('Adding duplicate rows', () => {
     beforeAll(() => {
         const realmPath = 'CustomRealmPath.path';
 
-        DynamicRealm.init({ realmPath });
+        MetaRealm.init({ realmPath });
     });
 
     it('Should not create duplicate rows in the realm', () => {
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
 
         // Tests
-        expect(DynamicRealm.getSchema(SCHEMA_1.name)).toEqual(SCHEMA_1);
+        expect(MetaRealm.getSchema(SCHEMA_1.name)).toEqual(SCHEMA_1);
     });
 });
 
@@ -149,48 +149,48 @@ describe('Querying for non-existant schemas', () => {
     beforeAll(() => {
         const realmPath = 'CustomRealmPath.path';
 
-        DynamicRealm.init({ realmPath });
+        MetaRealm.init({ realmPath });
     });
 
     it('Should return an empty array', () => {
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
 
         // Tests
-        expect(DynamicRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name])).toEqual([SCHEMA_1]);
-        expect(DynamicRealm.getSchemas([SCHEMA_2.name])).toEqual([]);
+        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name])).toEqual([SCHEMA_1]);
+        expect(MetaRealm.getSchemas([SCHEMA_2.name])).toEqual([]);
     });
 });
 
-describe('Adding new schemas via DynamicRealm', () => {
+describe('Adding new schemas via MetaRealm', () => {
     beforeAll(() => {
         const realmPath = 'CustomRealmPath.path';
 
-        DynamicRealm.init({ realmPath });
+        MetaRealm.init({ realmPath });
     });
 
     it("Should allow users to 'get' the new schema json from the 'dynamic' realm schema", () => {
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_2);
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_3);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_2);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_3);
 
         // Tests
-        expect(DynamicRealm.getSchema(SCHEMA_1.name)).toEqual(SCHEMA_1);
-        expect(DynamicRealm.getSchemas()).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3]);
-        expect(DynamicRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name])).toEqual([SCHEMA_1, SCHEMA_2]);
-        expect(DynamicRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_3.name])).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3]);
-        expect(DynamicRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_4.name, SCHEMA_6.name])).toEqual([SCHEMA_1, SCHEMA_2]);
+        expect(MetaRealm.getSchema(SCHEMA_1.name)).toEqual(SCHEMA_1);
+        expect(MetaRealm.getSchemas()).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3]);
+        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name])).toEqual([SCHEMA_1, SCHEMA_2]);
+        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_3.name])).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3]);
+        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_4.name, SCHEMA_6.name])).toEqual([SCHEMA_1, SCHEMA_2]);
 
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_4);
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_5);
-        DynamicRealm.saveSchema(SCHEMA_PARAMS_6);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_4);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_5);
+        MetaRealm.saveSchema(SCHEMA_PARAMS_6);
 
         // Tests
-        expect(DynamicRealm.getSchema(SCHEMA_1.name)).toEqual(SCHEMA_1);
-        expect(DynamicRealm.getSchemas()).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3, SCHEMA_4, SCHEMA_5, SCHEMA_6]);
-        expect(DynamicRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_4.name, SCHEMA_6.name])).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_4, SCHEMA_6]);
-        expect(DynamicRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_3.name, SCHEMA_4.name, SCHEMA_5.name, SCHEMA_6.name])).toEqual([
+        expect(MetaRealm.getSchema(SCHEMA_1.name)).toEqual(SCHEMA_1);
+        expect(MetaRealm.getSchemas()).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3, SCHEMA_4, SCHEMA_5, SCHEMA_6]);
+        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_4.name, SCHEMA_6.name])).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_4, SCHEMA_6]);
+        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_3.name, SCHEMA_4.name, SCHEMA_5.name, SCHEMA_6.name])).toEqual([
             SCHEMA_1,
             SCHEMA_2,
             SCHEMA_3,

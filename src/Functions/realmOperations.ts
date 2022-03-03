@@ -2,9 +2,9 @@ import Realm from 'realm';
 
 import { DEFAULT_PATH } from '../Realm/constants';
 import { globalRealm } from '../Realm/globalRealm';
-import { DynamicRealmProperties } from '../Schemas/types/types';
-import { getDynamicRealm_wr } from './dynamicRealmOperations';
-import { getSchemas } from './dynamicSchemaOperations';
+import { MetaRealmProperties } from '../Schemas/types/types';
+import { getMetaRealm_wr } from './metaRealmOperations';
+import { getSchemas } from './metaSchemaOperations';
 import { InitParams, LoadRealmParams } from './types/types';
 
 let _isInitialized: boolean = false;
@@ -23,7 +23,7 @@ export async function init({ realmPath = DEFAULT_PATH, force = false }: InitPara
     // Do not re-initialize
     if(_isInitialized && !force) return;
 
-    // 1. Open a realm containing only the DynamicSchema and
+    // 1. Open a realm containing only the MetaSchema and
     // Store realm in global wrapper
     await globalRealm.openRealm(realmPath);
 
@@ -32,14 +32,14 @@ export async function init({ realmPath = DEFAULT_PATH, force = false }: InitPara
 }
 
 export async function loadRealm(realmPath: string): Promise<Realm> {
-    // 1. Get DynamicRealm
-    const dynamicRealm: DynamicRealmProperties = getDynamicRealm_wr(realmPath);
+    // 1. Get MetaRealm
+    const metaRealm: MetaRealmProperties = getMetaRealm_wr(realmPath);
 
-    // 2. Get DynamicSchemas
-    const schema: Realm.ObjectSchema[] = getSchemas(dynamicRealm.schemaNames);
+    // 2. Get MetaSchemas
+    const schema: Realm.ObjectSchema[] = getSchemas(metaRealm.schemaNames);
 
     // 3. Open Realm
-    return Realm.open({ schema, path: dynamicRealm.realmPath, schemaVersion: dynamicRealm.schemaVersion });
+    return Realm.open({ schema, path: metaRealm.realmPath, schemaVersion: metaRealm.schemaVersion });
 }
 
 /**
@@ -51,7 +51,7 @@ export async function loadRealm(realmPath: string): Promise<Realm> {
  * @returns
  */
 export async function loadRealmFromSchemas({ realmPath: path, schemaNames = [] }: LoadRealmParams): Promise<Realm> {
-    // 1. Get DynamicSchemas
+    // 1. Get MetaSchemas
     const schema: Realm.ObjectSchema[] = getSchemas(schemaNames);
 
     // 2. Open Realm

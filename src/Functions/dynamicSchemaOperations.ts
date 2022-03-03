@@ -1,8 +1,8 @@
 import { globalRealm } from '../Realm/globalRealm';
 import { DYNAMIC_SCHEMA_NAME } from '../Schemas';
-import { DynamicSchemaProperties, DynamicRealmProperties } from '../Schemas/types/types';
+import { MetaSchemaProperties, MetaRealmProperties } from '../Schemas/types/types';
 import { Dict } from '../types/types';
-import { getDynamicRealm, _incrementRealmSchemaVersion, _rmRealmSchemaName } from './dynamicRealmOperations';
+import { getMetaRealm, _incrementRealmSchemaVersion, _rmRealmSchemaName } from './metaRealmOperations';
 import { SaveSchemaParams } from './types/types';
 
 export function saveSchemas(params: SaveSchemaParams[]) {
@@ -15,11 +15,11 @@ export const MetadataType: Dict<string> = {
 };
 export function saveSchema({ realmPath, schema, overwrite = false, metadataType = MetadataType.Object }: SaveSchemaParams): void {
     // 1. Check if schema already exists
-    const existingSchema: DynamicSchemaProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_SCHEMA_NAME, schema.name);
+    const existingSchema: MetaSchemaProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_SCHEMA_NAME, schema.name);
     if(existingSchema && !overwrite) return;
 
-    // 2. Create DynamicSchema object to save
-    const schemaObj: DynamicSchemaProperties = {
+    // 2. Create MetaSchema object to save
+    const schemaObj: MetaSchemaProperties = {
         // 2.1. Record the 'name' property for simple querying
         name: schema.name,
         realmPath,
@@ -30,39 +30,39 @@ export function saveSchema({ realmPath, schema, overwrite = false, metadataType 
     };
 
     globalRealm.getRealm().write(() => {
-        // 3. If exists, remove Schema and increment DynamicRealm
+        // 3. If exists, remove Schema and increment MetaRealm
         if (existingSchema) {
             rmSchema(schema.name);
             _incrementRealmSchemaVersion(realmPath);
         }
 
-        // 4. Add the new schema to the DynamicSchema table
+        // 4. Add the new schema to the MetaSchema table
         globalRealm.getRealm().create(DYNAMIC_SCHEMA_NAME, schemaObj);
 
-        // 5. Get or create the DynamicRealm
-        const dynamicRealm: DynamicRealmProperties = getDynamicRealm(realmPath);
+        // 5. Get or create the MetaRealm
+        const metaRealm: MetaRealmProperties = getMetaRealm(realmPath);
 
-        // 6. Add new DynamicSchema's name to DynamicRealm
-        dynamicRealm.schemaNames.push(schema.name);
+        // 6. Add new MetaSchema's name to MetaRealm
+        metaRealm.schemaNames.push(schema.name);
     });
 }
 
-export function _getDynamicSchema(schemaName: string): DynamicSchemaProperties {
+export function _getMetaSchema(schemaName: string): MetaSchemaProperties {
     return globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_SCHEMA_NAME, schemaName);
 }
 
-export function _getDynamicSchemas(schemaNames: string[]): DynamicSchemaProperties[] {
+export function _getMetaSchemas(schemaNames: string[]): MetaSchemaProperties[] {
     // console.log('here7');
     if (!schemaNames) {
         return Array.from(globalRealm.getRealm().objects(DYNAMIC_SCHEMA_NAME));
     }
 
-    return schemaNames.map((schemaName: string) => _getDynamicSchema(schemaName)).filter((dynamicSchema: DynamicSchemaProperties) => !!dynamicSchema);
+    return schemaNames.map((schemaName: string) => _getMetaSchema(schemaName)).filter((metaSchema: MetaSchemaProperties) => !!metaSchema);
 }
 
 export function getSchema(schemaName: string): Realm.ObjectSchema {
-    const dynamicSchema: DynamicSchemaProperties = _getDynamicSchema(schemaName);
-    if (dynamicSchema) return JSON.parse(dynamicSchema.schema);
+    const metaSchema: MetaSchemaProperties = _getMetaSchema(schemaName);
+    if (metaSchema) return JSON.parse(metaSchema.schema);
 }
 
 /**
@@ -74,14 +74,14 @@ export function getSchema(schemaName: string): Realm.ObjectSchema {
  * @returns
  */
 export function getSchemas(schemaNames: string[] = undefined): Realm.ObjectSchema[] {
-    return _getDynamicSchemas(schemaNames).map((dynamicSchema: DynamicSchemaProperties) => JSON.parse(dynamicSchema.schema));
+    return _getMetaSchemas(schemaNames).map((metaSchema: MetaSchemaProperties) => JSON.parse(metaSchema.schema));
 }
 
 export function rmSchema(schemaName: string): boolean {
     let schemaExists = false;
 
     // 1. Get schema to delete
-    const schema: DynamicSchemaProperties = _getDynamicSchema(schemaName);
+    const schema: MetaSchemaProperties = _getMetaSchema(schemaName);
 
     globalRealm.getRealm().write(() => {
         // 2. Schema exists
@@ -89,10 +89,10 @@ export function rmSchema(schemaName: string): boolean {
             // 2.1. Mark as exists
             schemaExists = true;
 
-            // 2.2. Delete from DynamicSchema
+            // 2.2. Delete from MetaSchema
             globalRealm.getRealm().delete(schema);
 
-            // 2.3. Remove schema name from DynamicRealm
+            // 2.3. Remove schema name from MetaRealm
             _rmRealmSchemaName(schema);
         }
     });
@@ -104,17 +104,17 @@ export function rmSchemas(schemaNames: string[]): string[] {
     let removedSchemas;
 
     // 1. Get schemas to delete
-    const schemas: DynamicSchemaProperties[] = _getDynamicSchemas(schemaNames);
+    const schemas: MetaSchemaProperties[] = _getMetaSchemas(schemaNames);
 
     // 2. Mark schemas that exist
-    removedSchemas = schemas.map((schema: DynamicSchemaProperties) => schema.name);
+    removedSchemas = schemas.map((schema: MetaSchemaProperties) => schema.name);
 
     globalRealm.getRealm().write(() => {
         // 3. Delete schemas
-        schemas.forEach((schema: DynamicSchemaProperties) => {
+        schemas.forEach((schema: MetaSchemaProperties) => {
             // 3.1. Delete
             globalRealm.getRealm().delete(schema);
-            // 3.2. Remove schema name from DynamicRealm
+            // 3.2. Remove schema name from MetaRealm
             _rmRealmSchemaName(schema);
         });
     });

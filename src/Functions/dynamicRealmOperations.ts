@@ -1,7 +1,7 @@
 import { CREATE_DYNAMIC_REALM_SCHEMA } from '../Realm/constants';
 import { globalRealm } from '../Realm/globalRealm';
 import { DYNAMIC_REALM_NAME } from '../Schemas';
-import { DynamicRealmProperties, DynamicSchemaProperties } from '../Schemas/types/types';
+import { MetaRealmProperties, MetaSchemaProperties } from '../Schemas/types/types';
 
 /**
  * Opens a write transaction
@@ -9,55 +9,55 @@ import { DynamicRealmProperties, DynamicSchemaProperties } from '../Schemas/type
  * @param realmPath
  * @returns
  */
-export function getDynamicRealm_wr(realmPath: string): DynamicRealmProperties {
-    let dynamicRealm: DynamicRealmProperties;
+export function getMetaRealm_wr(realmPath: string): MetaRealmProperties {
+    let metaRealm: MetaRealmProperties;
 
     globalRealm.getRealm().write(() => {
-        dynamicRealm = getDynamicRealm(realmPath);
+        metaRealm = getMetaRealm(realmPath);
     });
 
-    return dynamicRealm;
+    return metaRealm;
 }
 
-export function getDynamicRealm(realmPath: string): DynamicRealmProperties {
-    // 1. Check if DynamicRealm exists
-    let dynamicRealm: DynamicRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmPath);
+export function getMetaRealm(realmPath: string): MetaRealmProperties {
+    // 1. Check if MetaRealm exists
+    let metaRealm: MetaRealmProperties = globalRealm.getRealm().objectForPrimaryKey(DYNAMIC_REALM_NAME, realmPath);
 
-    // 2. Create DynamicRealm object if not exists
-    if (!dynamicRealm) {
+    // 2. Create MetaRealm object if not exists
+    if (!metaRealm) {
         // 2.1. Create object
-        const dynamicRealmSchemaObj: DynamicRealmProperties = CREATE_DYNAMIC_REALM_SCHEMA({ realmPath });
+        const metaRealmSchemaObj: MetaRealmProperties = CREATE_DYNAMIC_REALM_SCHEMA({ realmPath });
 
         // 5.1.2. Save
-        dynamicRealm = globalRealm.getRealm().create(DYNAMIC_REALM_NAME, dynamicRealmSchemaObj);
+        metaRealm = globalRealm.getRealm().create(DYNAMIC_REALM_NAME, metaRealmSchemaObj);
     }
 
-    return dynamicRealm;
+    return metaRealm;
 }
 
 /**
- * Private helper method for removing a DynamicSchema's schema name from its DynamicRealm's list
- * Subscequently deletes the DynamicRealm if it no longer contains any schema names
+ * Private helper method for removing a MetaSchema's schema name from its MetaRealm's list
+ * Subscequently deletes the MetaRealm if it no longer contains any schema names
  *
- * @param schema the DynamicSchema whose name will be removed from its DynamicRealm's list
+ * @param schema the MetaSchema whose name will be removed from its MetaRealm's list
  */
-export function _rmRealmSchemaName(schema: DynamicSchemaProperties): void {
-    // 1. Get DynamicRealm
-    const realmSchema: DynamicRealmProperties = getDynamicRealm(schema.realmPath);
+export function _rmRealmSchemaName(schema: MetaSchemaProperties): void {
+    // 1. Get MetaRealm
+    const realmSchema: MetaRealmProperties = getMetaRealm(schema.realmPath);
 
-    // 2. Remove schema name from DynamicRealm
+    // 2. Remove schema name from MetaRealm
     if (realmSchema) {
         const index = realmSchema.schemaNames.indexOf(schema.name);
         realmSchema.schemaNames.splice(index, 1);
 
-        // 3. Delete DynamicRealm if no longer contains any schema names
+        // 3. Delete MetaRealm if no longer contains any schema names
         if (realmSchema.schemaNames.length == 0) globalRealm.getRealm().delete(realmSchema);
     }
 }
 
 export function _incrementRealmSchemaVersion(realmPath: string) {
-    // 1. Get DynamicRealm
-    const realmSchema: DynamicRealmProperties = getDynamicRealm(realmPath);
+    // 1. Get MetaRealm
+    const realmSchema: MetaRealmProperties = getMetaRealm(realmPath);
 
     // 2. Increment schemaVersion
     if (realmSchema) {

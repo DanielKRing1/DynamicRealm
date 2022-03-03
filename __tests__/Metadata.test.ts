@@ -2,8 +2,8 @@ jest.mock('realm');
 
 import Realm from 'realm';
 
-import DynamicRealm, { SaveSchemaParams } from '../src';
-import { MetadataType } from '../src/Functions/dynamicSchemaOperations';
+import MetaRealm, { SaveSchemaParams } from '../src';
+import { MetadataType } from '../src/Functions/metaSchemaOperations';
 
 const REALM_PATH_1 = 'RealmPath1.path';
 
@@ -60,13 +60,13 @@ const realmPath = 'CustomRealmPath.path';
 
 describe('Metadata', () => {
     it('Should be addable as an object', async () => {
-        await DynamicRealm.init({ realmPath });
+        await MetaRealm.init({ realmPath });
 
-        DynamicRealm.saveSchemas([SCHEMA_PARAMS_1, SCHEMA_PARAMS_2]);
+        MetaRealm.saveSchemas([SCHEMA_PARAMS_1, SCHEMA_PARAMS_2]);
 
         let allMetadata: Object;
 
-        allMetadata = DynamicRealm.updateMetadata<Object>(SCHEMA_1.name, (allMetadata: Object) => {
+        allMetadata = MetaRealm.updateMetadata<Object>(SCHEMA_1.name, (allMetadata: Object) => {
             allMetadata[SCHEMA_1_METADATA_1_KEY] = SCHEMA_1_METADATA_1;
             allMetadata[SCHEMA_1_METADATA_2_KEY] = SCHEMA_1_METADATA_2;
             return allMetadata;
@@ -77,13 +77,13 @@ describe('Metadata', () => {
             [SCHEMA_1_METADATA_1_KEY]: SCHEMA_1_METADATA_1,
             [SCHEMA_1_METADATA_2_KEY]: SCHEMA_1_METADATA_2,
         });
-        expect(DynamicRealm.getMetadata(SCHEMA_1.name)).toEqual({
+        expect(MetaRealm.getMetadata(SCHEMA_1.name)).toEqual({
             [SCHEMA_1_METADATA_1_KEY]: SCHEMA_1_METADATA_1,
             [SCHEMA_1_METADATA_2_KEY]: SCHEMA_1_METADATA_2,
         });
 
         // 2. Add 3rd metadata entry
-        allMetadata = DynamicRealm.updateMetadata<Object>(SCHEMA_1.name, (allMetadata: Object) => {
+        allMetadata = MetaRealm.updateMetadata<Object>(SCHEMA_1.name, (allMetadata: Object) => {
             allMetadata[SCHEMA_1_METADATA_3_KEY] = SCHEMA_1_METADATA_3;
             return allMetadata;
         });
@@ -93,21 +93,21 @@ describe('Metadata', () => {
             [SCHEMA_1_METADATA_2_KEY]: SCHEMA_1_METADATA_2,
             [SCHEMA_1_METADATA_3_KEY]: SCHEMA_1_METADATA_3,
         });
-        expect(DynamicRealm.getMetadata(SCHEMA_1.name)).toEqual({
+        expect(MetaRealm.getMetadata(SCHEMA_1.name)).toEqual({
             [SCHEMA_1_METADATA_1_KEY]: SCHEMA_1_METADATA_1,
             [SCHEMA_1_METADATA_2_KEY]: SCHEMA_1_METADATA_2,
             [SCHEMA_1_METADATA_3_KEY]: SCHEMA_1_METADATA_3,
         });
 
-        expect(DynamicRealm.getMetadata(SCHEMA_2.name)).toEqual([]);
+        expect(MetaRealm.getMetadata(SCHEMA_2.name)).toEqual([]);
     });
 
     it('Should be addable as an array', async () => {
-        DynamicRealm.saveSchemas([SCHEMA_PARAMS_1, SCHEMA_PARAMS_2]);
+        MetaRealm.saveSchemas([SCHEMA_PARAMS_1, SCHEMA_PARAMS_2]);
 
         let allMetadata: any[];
 
-        allMetadata = DynamicRealm.updateMetadata<any[]>(SCHEMA_2.name, (allMetadata: any[]) => {
+        allMetadata = MetaRealm.updateMetadata<any[]>(SCHEMA_2.name, (allMetadata: any[]) => {
             allMetadata.push(SCHEMA_2_METADATA_1);
             allMetadata.push(SCHEMA_2_METADATA_2);
             return allMetadata;
@@ -115,18 +115,18 @@ describe('Metadata', () => {
 
         // 1. Add first 2 metadata entries
         expect(allMetadata).toEqual([SCHEMA_2_METADATA_1, SCHEMA_2_METADATA_2]);
-        expect(DynamicRealm.getMetadata(SCHEMA_2.name)).toEqual([SCHEMA_2_METADATA_1, SCHEMA_2_METADATA_2]);
+        expect(MetaRealm.getMetadata(SCHEMA_2.name)).toEqual([SCHEMA_2_METADATA_1, SCHEMA_2_METADATA_2]);
 
         // 2. Add 3rd metadata entry
-        allMetadata = DynamicRealm.updateMetadata<any[]>(SCHEMA_2.name, (allMetadata: any[]) => {
+        allMetadata = MetaRealm.updateMetadata<any[]>(SCHEMA_2.name, (allMetadata: any[]) => {
             allMetadata.push(SCHEMA_2_METADATA_3);
             return allMetadata;
         });
 
         expect(allMetadata).toEqual([SCHEMA_2_METADATA_1, SCHEMA_2_METADATA_2, SCHEMA_2_METADATA_3]);
-        expect(DynamicRealm.getMetadata(SCHEMA_2.name)).toEqual([SCHEMA_2_METADATA_1, SCHEMA_2_METADATA_2, SCHEMA_2_METADATA_3]);
+        expect(MetaRealm.getMetadata(SCHEMA_2.name)).toEqual([SCHEMA_2_METADATA_1, SCHEMA_2_METADATA_2, SCHEMA_2_METADATA_3]);
 
-        expect(DynamicRealm.getMetadata(SCHEMA_1.name)).toEqual({
+        expect(MetaRealm.getMetadata(SCHEMA_1.name)).toEqual({
             [SCHEMA_1_METADATA_1_KEY]: SCHEMA_1_METADATA_1,
             [SCHEMA_1_METADATA_2_KEY]: SCHEMA_1_METADATA_2,
             [SCHEMA_1_METADATA_3_KEY]: SCHEMA_1_METADATA_3,

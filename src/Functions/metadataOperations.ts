@@ -1,10 +1,10 @@
 import { globalRealm } from '../Realm/globalRealm';
-import { DynamicSchemaProperties } from '../Schemas/types/types';
-import { getSchema, _getDynamicSchema } from './dynamicSchemaOperations';
+import { MetaSchemaProperties } from '../Schemas/types/types';
+import { getSchema, _getMetaSchema } from './metaSchemaOperations';
 
 export function getMetadata<R>(schemaName: string): R {
     // 1. Get schema
-    const schema: DynamicSchemaProperties = _getDynamicSchema(schemaName);
+    const schema: MetaSchemaProperties = _getMetaSchema(schemaName);
 
     // 2. Convert metadat string to obj
     const metadataObj: any = JSON.parse(schema.metadata);
@@ -14,7 +14,7 @@ export function getMetadata<R>(schemaName: string): R {
 
 export function updateMetadata<R>(schemaName: string, updateHandler: (allMetaData: any) => R): R {
     // 1. Get schema
-    const schema: DynamicSchemaProperties = _getDynamicSchema(schemaName);
+    const schema: MetaSchemaProperties = _getMetaSchema(schemaName);
 
     let result: R;
     globalRealm.getRealm().write(() => {
