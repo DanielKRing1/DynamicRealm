@@ -1,31 +1,31 @@
-import { globalRealm } from '../Realm/globalRealm';
-import { MetaSchemaProperties } from '../Schemas/types/types';
-import { getSchema, _getMetaSchema } from './metaSchemaOperations';
+import { metaRealmManager } from '../Realm/metaRealmsManager';
+import { LoadableSchemaRowProperties } from '../Schemas/types/types';
+import { getLoadableSchemaRow } from './metaSchemaOperations';
 
-export function getMetadata<R>(schemaName: string): R {
+export function getMetadata<R>(metaRealmPath: string, schemaName: string): R {
     // 1. Get schema
-    const schema: MetaSchemaProperties = _getMetaSchema(schemaName);
+    const loadableSchemaRow: LoadableSchemaRowProperties = getLoadableSchemaRow(metaRealmPath, schemaName);
 
     // 2. Convert metadat string to obj
-    const metadataObj: any = JSON.parse(schema.metadata);
+    const metadataObj: any = JSON.parse(loadableSchemaRow.metadata);
 
     return metadataObj;
 }
 
-export function updateMetadata<R>(schemaName: string, updateHandler: (allMetaData: any) => R): R {
+export function updateMetadata<R>(metaRealmPath: string, schemaName: string, updateHandler: (allMetaData: any) => R): R {
     // 1. Get schema
-    const schema: MetaSchemaProperties = _getMetaSchema(schemaName);
+    const loadableSchemaRow: LoadableSchemaRowProperties = getLoadableSchemaRow(metaRealmPath, schemaName);
 
     let result: R;
-    globalRealm.getRealm().write(() => {
+    metaRealmManager.getMetaRealm(metaRealmPath).write(() => {
         // 2. Convert metadat string to obj
-        const metadataObj: any = JSON.parse(schema.metadata);
+        const metadataObj: any = JSON.parse(loadableSchemaRow.metadata);
 
         // 3. Execute updateHandler on the obj
         result = updateHandler(metadataObj);
 
         // 4. Write full metadata object back into realm
-        schema.metadata = JSON.stringify(result);
+        loadableSchemaRow.metadata = JSON.stringify(result);
     });
 
     return result;

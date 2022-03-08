@@ -1,7 +1,8 @@
 jest.mock('realm');
 
-import MetaRealm, { SaveSchemaParams } from '../src';
-import { globalRealm } from '../src/Realm/globalRealm';
+import DynamicRealm, { SaveSchemaParams } from '../src';
+import { DEFAULT_META_REALM_PATH } from '../src/Realm/constants';
+import { metaRealmManager } from '../src/Realm/metaRealmsManager';
 
 const REALM_PATH_1 = 'RealmPath1.path';
 const REALM_PATH_2 = 'RealmPath2.path';
@@ -15,7 +16,8 @@ const SCHEMA_1: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_1: SaveSchemaParams = {
-    realmPath: REALM_PATH_1,
+    metaRealmPath: DEFAULT_META_REALM_PATH,
+    loadableRealmPath: REALM_PATH_1,
     schema: SCHEMA_1,
 };
 const SCHEMA_1_EXPECTED_ROW = {
@@ -33,7 +35,8 @@ const SCHEMA_2: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_2: SaveSchemaParams = {
-    realmPath: REALM_PATH_1,
+    metaRealmPath: DEFAULT_META_REALM_PATH,
+    loadableRealmPath: REALM_PATH_1,
     schema: SCHEMA_2,
 };
 const SCHEMA_2_EXPECTED_ROW = {
@@ -51,7 +54,8 @@ const SCHEMA_3: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_3: SaveSchemaParams = {
-    realmPath: REALM_PATH_1,
+    metaRealmPath: DEFAULT_META_REALM_PATH,
+    loadableRealmPath: REALM_PATH_1,
     schema: SCHEMA_3,
 };
 const SCHEMA_3_EXPECTED_ROW = {
@@ -69,7 +73,8 @@ const SCHEMA_4: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_4: SaveSchemaParams = {
-    realmPath: REALM_PATH_2,
+    metaRealmPath: DEFAULT_META_REALM_PATH,
+    loadableRealmPath: REALM_PATH_2,
     schema: SCHEMA_4,
 };
 const SCHEMA_4_EXPECTED_ROW = {
@@ -87,7 +92,8 @@ const SCHEMA_5: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_5: SaveSchemaParams = {
-    realmPath: REALM_PATH_2,
+    metaRealmPath: DEFAULT_META_REALM_PATH,
+    loadableRealmPath: REALM_PATH_2,
     schema: SCHEMA_5,
 };
 const SCHEMA_5_EXPECTED_ROW = {
@@ -105,7 +111,8 @@ const SCHEMA_6: Realm.ObjectSchema = {
     },
 };
 const SCHEMA_PARAMS_6: SaveSchemaParams = {
-    realmPath: REALM_PATH_2,
+    metaRealmPath: DEFAULT_META_REALM_PATH,
+    loadableRealmPath: REALM_PATH_2,
     schema: SCHEMA_6,
 };
 const SCHEMA_6_EXPECTED_ROW = {
@@ -114,83 +121,77 @@ const SCHEMA_6_EXPECTED_ROW = {
     metadata: '{}',
 };
 
-describe('Getting schemas via MetaRealm before adding any schemas', () => {
+describe('Getting schemas via DynamicRealm before adding any schemas', () => {
     beforeAll(() => {
-        const realmPath = 'CustomRealmPath.path';
-
-        MetaRealm.init({ realmPath });
+        DynamicRealm.openMetaRealm({ metaRealmPath: DEFAULT_META_REALM_PATH });
     });
 
     it('Should return an empty array', () => {
         // Tests
-        expect(MetaRealm.getSchema(SCHEMA_1.name)).toEqual(undefined);
-        expect(MetaRealm.getSchemas()).toEqual([]);
+        expect(DynamicRealm.getSchema(SCHEMA_PARAMS_1.metaRealmPath, SCHEMA_PARAMS_1.schema.name)).toEqual(undefined);
+        expect(DynamicRealm.getSchemas(SCHEMA_PARAMS_1.metaRealmPath)).toEqual([]);
     });
 });
 
 describe('Adding duplicate rows', () => {
     beforeAll(() => {
-        const realmPath = 'CustomRealmPath.path';
-
-        MetaRealm.init({ realmPath });
+        DynamicRealm.openMetaRealm({ metaRealmPath: DEFAULT_META_REALM_PATH });
     });
 
     it('Should not create duplicate rows in the realm', () => {
-        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
-        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
-        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
 
         // Tests
-        expect(MetaRealm.getSchema(SCHEMA_1.name)).toEqual(SCHEMA_1);
+        expect(DynamicRealm.getSchema(SCHEMA_PARAMS_1.metaRealmPath, SCHEMA_1.name)).toEqual(SCHEMA_1);
     });
 });
 
 describe('Querying for non-existant schemas', () => {
     beforeAll(() => {
-        const realmPath = 'CustomRealmPath.path';
-
-        MetaRealm.init({ realmPath });
+        DynamicRealm.openMetaRealm({ metaRealmPath: DEFAULT_META_REALM_PATH });
     });
 
     it('Should return an empty array', () => {
-        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
-        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
-        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
 
         // Tests
-        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name])).toEqual([SCHEMA_1]);
-        expect(MetaRealm.getSchemas([SCHEMA_2.name])).toEqual([]);
+        expect(DynamicRealm.getSchemas(SCHEMA_PARAMS_1.metaRealmPath, [SCHEMA_1.name, SCHEMA_2.name])).toEqual([SCHEMA_1]);
+        expect(DynamicRealm.getSchemas(SCHEMA_PARAMS_1.metaRealmPath, [SCHEMA_2.name])).toEqual([]);
     });
 });
 
-describe('Adding new schemas via MetaRealm', () => {
+describe('Adding new schemas via DynamicRealm', () => {
     beforeAll(() => {
-        const realmPath = 'CustomRealmPath.path';
+        const metaRealmPath = 'CustomRealmPath.path';
 
-        MetaRealm.init({ realmPath });
+        DynamicRealm.openMetaRealm({ metaRealmPath });
     });
 
     it("Should allow users to 'get' the new schema json from the 'dynamic' realm schema", () => {
-        MetaRealm.saveSchema(SCHEMA_PARAMS_1);
-        MetaRealm.saveSchema(SCHEMA_PARAMS_2);
-        MetaRealm.saveSchema(SCHEMA_PARAMS_3);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_1);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_2);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_3);
 
         // Tests
-        expect(MetaRealm.getSchema(SCHEMA_1.name)).toEqual(SCHEMA_1);
-        expect(MetaRealm.getSchemas()).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3]);
-        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name])).toEqual([SCHEMA_1, SCHEMA_2]);
-        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_3.name])).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3]);
-        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_4.name, SCHEMA_6.name])).toEqual([SCHEMA_1, SCHEMA_2]);
+        expect(DynamicRealm.getSchema(SCHEMA_PARAMS_1.metaRealmPath, SCHEMA_1.name)).toEqual(SCHEMA_1);
+        expect(DynamicRealm.getSchemas(SCHEMA_PARAMS_1.metaRealmPath, )).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3]);
+        expect(DynamicRealm.getSchemas(SCHEMA_PARAMS_1.metaRealmPath, [SCHEMA_1.name, SCHEMA_2.name])).toEqual([SCHEMA_1, SCHEMA_2]);
+        expect(DynamicRealm.getSchemas(SCHEMA_PARAMS_1.metaRealmPath, [SCHEMA_1.name, SCHEMA_2.name, SCHEMA_3.name])).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3]);
+        expect(DynamicRealm.getSchemas(SCHEMA_PARAMS_1.metaRealmPath, [SCHEMA_1.name, SCHEMA_2.name, SCHEMA_4.name, SCHEMA_6.name])).toEqual([SCHEMA_1, SCHEMA_2]);
 
-        MetaRealm.saveSchema(SCHEMA_PARAMS_4);
-        MetaRealm.saveSchema(SCHEMA_PARAMS_5);
-        MetaRealm.saveSchema(SCHEMA_PARAMS_6);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_4);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_5);
+        DynamicRealm.saveSchema(SCHEMA_PARAMS_6);
 
         // Tests
-        expect(MetaRealm.getSchema(SCHEMA_1.name)).toEqual(SCHEMA_1);
-        expect(MetaRealm.getSchemas()).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3, SCHEMA_4, SCHEMA_5, SCHEMA_6]);
-        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_4.name, SCHEMA_6.name])).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_4, SCHEMA_6]);
-        expect(MetaRealm.getSchemas([SCHEMA_1.name, SCHEMA_2.name, SCHEMA_3.name, SCHEMA_4.name, SCHEMA_5.name, SCHEMA_6.name])).toEqual([
+        expect(DynamicRealm.getSchema(SCHEMA_PARAMS_1.metaRealmPath, SCHEMA_1.name)).toEqual(SCHEMA_1);
+        expect(DynamicRealm.getSchemas(SCHEMA_PARAMS_1.metaRealmPath)).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3, SCHEMA_4, SCHEMA_5, SCHEMA_6]);
+        expect(DynamicRealm.getSchemas(SCHEMA_PARAMS_1.metaRealmPath, [SCHEMA_1.name, SCHEMA_2.name, SCHEMA_4.name, SCHEMA_6.name])).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_4, SCHEMA_6]);
+        expect(DynamicRealm.getSchemas(SCHEMA_PARAMS_1.metaRealmPath, [SCHEMA_1.name, SCHEMA_2.name, SCHEMA_3.name, SCHEMA_4.name, SCHEMA_5.name, SCHEMA_6.name])).toEqual([
             SCHEMA_1,
             SCHEMA_2,
             SCHEMA_3,
@@ -199,6 +200,6 @@ describe('Adding new schemas via MetaRealm', () => {
             SCHEMA_6,
         ]);
 
-        console.log(globalRealm.getRealm());
+        console.log(metaRealmManager.getMetaRealm(SCHEMA_PARAMS_1.metaRealmPath));
     });
 });

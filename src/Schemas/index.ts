@@ -1,6 +1,6 @@
-export const DYNAMIC_SCHEMA_NAME: string = 'MetaSchemas';
+export const META_SCHEMA_NAME: string = 'MetaSchemas';
 export const MetaSchema: Realm.ObjectSchema = {
-    name: DYNAMIC_SCHEMA_NAME,
+    name: META_SCHEMA_NAME,
     primaryKey: 'name',
     properties: {
         name: 'string',
@@ -9,9 +9,9 @@ export const MetaSchema: Realm.ObjectSchema = {
     },
 };
 
-export const DYNAMIC_REALM_NAME: string = 'MetaRealms';
+export const META_REALM_NAME: string = 'MetaRealms';
 export const MetaRealm: Realm.ObjectSchema = {
-    name: DYNAMIC_REALM_NAME,
+    name: META_REALM_NAME,
     primaryKey: 'realmPath',
     properties: {
         realmPath: 'string',

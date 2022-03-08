@@ -1,14 +1,16 @@
 export type InitParams = {
-    realmPath?: string;
+    metaRealmPath?: string;
     force?: boolean;
 };
 export type SaveSchemaParams = {
-    realmPath: string;
+    metaRealmPath: string;
+    loadableRealmPath: string;
     schema: Realm.ObjectSchema;
     overwrite?: boolean;
     metadataType?: string;
 };
 export type LoadRealmParams = {
-    realmPath: string;
+    metaRealmPath: string;
+    loadableRealmPath: string;
     schemaNames: string[];
 };

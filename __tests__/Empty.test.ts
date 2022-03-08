@@ -6,13 +6,13 @@ import MetaRealm from '../src';
 
 describe('A MetaRealm with no saved schemas', () => {
     it('Return an empty array of realm names', async () => {
-        const realmPath = 'CustomRealmPath.path';
+        const metaRealmPath = 'CustomRealmPath.path';
 
-        await MetaRealm.init({ realmPath });
+        await MetaRealm.openMetaRealm({ metaRealmPath });
 
         try {
-            expect(MetaRealm.getRealmNames).not.toThrowError();
-            expect(MetaRealm.getRealmNames()).toEqual([]);
+            expect(() => MetaRealm.getRealmNames(metaRealmPath)).not.toThrowError();
+            expect(MetaRealm.getRealmNames(metaRealmPath)).toEqual([]);
         } catch (err) {
             console.log('SHOULD NOT HAVE REACHED THIS PART OF CODE');
             console.log(err);
@@ -20,13 +20,13 @@ describe('A MetaRealm with no saved schemas', () => {
     });
 
     it('Return an empty array of schema names', async () => {
-        const realmPath = 'CustomRealmPath.path';
+        const metaRealmPath = 'CustomRealmPath.path';
 
-        await MetaRealm.init({ realmPath });
+        await MetaRealm.openMetaRealm({ metaRealmPath });
 
         try {
-            expect(MetaRealm.getSchemaNames).not.toThrowError();
-            expect(MetaRealm.getSchemaNames()).toEqual([]);
+            expect(() => MetaRealm.getSchemaNames(metaRealmPath)).not.toThrowError();
+            expect(MetaRealm.getSchemaNames(metaRealmPath)).toEqual([]);
         } catch (err) {
             console.log('SHOULD NOT HAVE REACHED THIS PART OF CODE');
             console.log(err);
@@ -34,15 +34,15 @@ describe('A MetaRealm with no saved schemas', () => {
     });
 
     it('Not throw an error when loading a non-existant MetaRealm', async () => {
-        const realmPath = 'CustomRealmPath.path';
+        const metaRealmPath = 'CustomRealmPath.path';
 
-        await MetaRealm.init({ realmPath });
+        await MetaRealm.openMetaRealm({ metaRealmPath });
 
         const TEST_REALM_PATH: string = 'TEST_REALM_PATH';
         try {
-            expect(() => MetaRealm.loadRealm(TEST_REALM_PATH)).not.toThrowError();
+            expect(() => MetaRealm.loadRealm(metaRealmPath, TEST_REALM_PATH)).not.toThrowError();
 
-            const realm = await MetaRealm.loadRealm(TEST_REALM_PATH);
+            const realm = await MetaRealm.loadRealm(metaRealmPath, TEST_REALM_PATH);
             expect(realm).toEqual(new Realm({ path: TEST_REALM_PATH }));
         } catch (err) {
             console.log('SHOULD NOT HAVE REACHED THIS PART OF CODE');

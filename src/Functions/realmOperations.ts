@@ -1,16 +1,14 @@
 import Realm from 'realm';
 
-import { DEFAULT_PATH } from '../Realm/constants';
-import { globalRealm } from '../Realm/globalRealm';
-import { MetaRealmProperties } from '../Schemas/types/types';
-import { getMetaRealm_wr } from './metaRealmOperations';
+import { DEFAULT_META_REALM_PATH } from '../Realm/constants';
+import { metaRealmManager } from '../Realm/metaRealmsManager';
+import { LoadableRealmRowProperties } from '../Schemas/types/types';
+import { getLoadableRealmRow_wr } from './metaRealmOperations';
 import { getSchemas } from './metaSchemaOperations';
 import { InitParams, LoadRealmParams } from './types/types';
 
-let _isInitialized: boolean = false;
-
-export function isInitialized() {
-    return _isInitialized;
+export function isInitialized(metaRealmPath: string) {
+    return metaRealmManager.hasMetaRealm(metaRealmPath);
 }
 
 /**
@@ -19,27 +17,30 @@ export function isInitialized() {
  * @param param0 
  * @returns 
  */
-export async function init({ realmPath = DEFAULT_PATH, force = false }: InitParams = {}): Promise<void> {
-    // Do not re-initialize
-    if(_isInitialized && !force) return;
+export async function openMetaRealm({ metaRealmPath = DEFAULT_META_REALM_PATH, force = false }: InitParams = {}): Promise<Realm> {
+    // 1. Does not have an open meta Realm, and May or may not have a Realm -- but try to remove it
+    if(metaRealmManager.hasOpenMetaRealm(metaRealmPath) && !force) return metaRealmManager.getMetaRealm(metaRealmPath);
 
-    // 1. Open a realm containing only the MetaSchema and
-    // Store realm in global wrapper
-    await globalRealm.openRealm(realmPath);
+    if(metaRealmManager.hasOpenMetaRealm(metaRealmPath) && force) metaRealmManager.rmMetaRealm(metaRealmPath);
 
-    // 2. Set initialized
-    _isInitialized = true;
+    // 2. Open a new meta Realm
+    await metaRealmManager.addMetaRealm(metaRealmPath);
+    
+    // 3. Get the open meta Realm, or open a new one
+    const metaRealm: Realm = metaRealmManager.getMetaRealm(metaRealmPath);
+
+    return metaRealm;
 }
 
-export async function loadRealm(realmPath: string): Promise<Realm> {
-    // 1. Get MetaRealm
-    const metaRealm: MetaRealmProperties = getMetaRealm_wr(realmPath);
+export async function loadRealm(metaRealmPath: string, loadableRealmPath: string): Promise<Realm> {
+    // 1. Get MetaRealm row
+    const metaRealmRow: LoadableRealmRowProperties = getLoadableRealmRow_wr(metaRealmPath, loadableRealmPath);
 
     // 2. Get MetaSchemas
-    const schema: Realm.ObjectSchema[] = getSchemas(metaRealm.schemaNames);
+    const schema: Realm.ObjectSchema[] = getSchemas(metaRealmPath, metaRealmRow.schemaNames);
 
     // 3. Open Realm
-    return Realm.open({ schema, path: metaRealm.realmPath, schemaVersion: metaRealm.schemaVersion });
+    return Realm.open({ schema, path: metaRealmRow.realmPath, schemaVersion: metaRealmRow.schemaVersion });
 }
 
 /**
@@ -50,9 +51,9 @@ export async function loadRealm(realmPath: string): Promise<Realm> {
  *                      will load all schemas if not provided
  * @returns
  */
-export async function loadRealmFromSchemas({ realmPath: path, schemaNames = [] }: LoadRealmParams): Promise<Realm> {
+export async function loadRealmFromSchemas({ metaRealmPath, loadableRealmPath: path, schemaNames = [] }: LoadRealmParams): Promise<Realm> {
     // 1. Get MetaSchemas
-    const schema: Realm.ObjectSchema[] = getSchemas(schemaNames);
+    const schema: Realm.ObjectSchema[] = getSchemas(metaRealmPath, schemaNames);
 
     // 2. Open Realm
     return Realm.open({ schema, path });

@@ -20,7 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "realm": "^10.8.0"
+    "realm": "^10.13.0"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",

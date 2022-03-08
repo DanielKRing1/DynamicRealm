@@ -1,6 +1,6 @@
 import { saveSchema, saveSchemas, getSchema, getSchemas, rmSchema, rmSchemas } from './Functions/metaSchemaOperations';
 import { getMetadata, updateMetadata } from './Functions/metadataOperations';
-import { init, isInitialized, loadRealm, loadRealmFromSchemas } from './Functions/realmOperations';
+import { openMetaRealm, isInitialized, loadRealm, loadRealmFromSchemas } from './Functions/realmOperations';
 import { getRealmNames, getSchemaNames, getProperties } from './Functions/uiUtils';
 import { ARRAY_METADATA_HANDLERS, DICT_METADATA_HANDLERS } from './Metadata/defaultHandlers';
 
@@ -10,7 +10,7 @@ export * from './Schemas/types/types';
 export * from './types/types';
 
 export default {
-    init,
+    openMetaRealm,
     isInitialized,
     saveSchema,
     saveSchemas,

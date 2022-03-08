@@ -1,44 +1,46 @@
-import { globalRealm } from '../Realm/globalRealm';
-import { DYNAMIC_REALM_NAME } from '../Schemas';
-import { MetaRealmProperties } from '../Schemas/types/types';
-import { getMetaRealm_wr } from './metaRealmOperations';
+import { metaRealmManager } from '../Realm/metaRealmsManager';
+import { META_REALM_NAME } from '../Schemas';
+import { LoadableRealmRowProperties } from '../Schemas/types/types';
+import { getLoadableRealmRow_wr } from './metaRealmOperations';
 import { getSchema, getSchemas } from './metaSchemaOperations';
 
-function getRealms(): Realm.Results<MetaRealmProperties> {
-    return globalRealm.getRealm().objects<MetaRealmProperties>(DYNAMIC_REALM_NAME);
+function getRealms(metaRealmPath: string): Realm.Results<LoadableRealmRowProperties> {
+    return metaRealmManager.getMetaRealm(metaRealmPath).objects<LoadableRealmRowProperties>(META_REALM_NAME);
 }
 
-export function getRealmNames(): string[] {
-    return getRealms().map((realm) => realm.realmPath);
+export function getRealmNames(metaRealmPath: string): string[] {
+    return getRealms(metaRealmPath).map((realm) => realm.realmPath);
 }
 
-export function getSchemaNames(realmPath: string = undefined): string[] {
+export function getSchemaNames(metaRealmPath: string, loadableRealmPath: string = undefined): string[] {
     // 1. Get schema names
     let schemaNames: string[];
-    if (!!realmPath) {
-        // 1.1.1. Get specified MetaRealm
-        const metaRealm: MetaRealmProperties = getMetaRealm_wr(realmPath);
+    if (!!loadableRealmPath) {
+        // 1.1.1. Get specified LoadableRealm
+        const loadableRealmRow: LoadableRealmRowProperties = getLoadableRealmRow_wr(metaRealmPath, loadableRealmPath);
         // 1.1.2. Get schema names
-        schemaNames = metaRealm.schemaNames;
+        schemaNames = loadableRealmRow.schemaNames;
     } else {
-        // 1.2.1. Get all MetaRealms
-        const metaRealms: Realm.Results<MetaRealmProperties> = getRealms();
+        // 1.2.1. Get all LoadableRealms
+        const loadableRealmRows: Realm.Results<LoadableRealmRowProperties> = getRealms(metaRealmPath);
 
         // 1.2.2. Flatten all schema names into one list
         schemaNames = [];
-        metaRealms.forEach((metaRealm: MetaRealmProperties) => {
-            if (!!metaRealm.schemaNames) schemaNames.push(...metaRealm.schemaNames);
+        loadableRealmRows.forEach((loadableRealmRow: LoadableRealmRowProperties) => {
+            if (!!loadableRealmRow.schemaNames) schemaNames.push(...loadableRealmRow.schemaNames);
         });
     }
 
     // 2. Get MetaSchemas
-    const schemas: Realm.ObjectSchema[] = getSchemas(schemaNames);
+    // const schemas: Realm.ObjectSchema[] = getSchemas(metaRealmPath, schemaNames);
 
-    return schemas.map((schema) => schema.name);
+    // return schemas.map((schema) => schema.name);
+
+    return schemaNames;
 }
 
-export function getProperties(schemaName: string): Realm.PropertiesTypes {
-    const schema: Realm.ObjectSchema = getSchema(schemaName);
+export function getProperties(metaRealmPath: string, schemaName: string): Realm.PropertiesTypes {
+    const schema: Realm.ObjectSchema = getSchema(metaRealmPath, schemaName);
 
     return schema.properties;
 }
