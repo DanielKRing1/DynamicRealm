@@ -1,15 +1,15 @@
 import { metaRealmManager } from '../Realm/metaRealmsManager';
-import { META_REALM_NAME } from '../Schemas';
+import { LOADABLE_REALM_TABLE_NAME } from '../Schemas';
 import { LoadableRealmRowProperties } from '../Schemas/types/types';
 import { getLoadableRealmRow_wr } from './metaRealmOperations';
-import { getSchema, getSchemas } from './metaSchemaOperations';
+import { getSchema } from './metaSchemaOperations';
 
-function getRealms(metaRealmPath: string): Realm.Results<LoadableRealmRowProperties> {
-    return metaRealmManager.getMetaRealm(metaRealmPath).objects<LoadableRealmRowProperties>(META_REALM_NAME);
+function getLoadableRealms(metaRealmPath: string): Realm.Results<LoadableRealmRowProperties> {
+    return metaRealmManager.getMetaRealm(metaRealmPath).objects<LoadableRealmRowProperties>(LOADABLE_REALM_TABLE_NAME);
 }
 
-export function getRealmNames(metaRealmPath: string): string[] {
-    return getRealms(metaRealmPath).map((realm) => realm.realmPath);
+export function getLoadableRealmNames(metaRealmPath: string): string[] {
+    return getLoadableRealms(metaRealmPath).map((realm) => realm.realmPath);
 }
 
 export function getSchemaNames(metaRealmPath: string, loadableRealmPath: string = undefined): string[] {
@@ -22,7 +22,7 @@ export function getSchemaNames(metaRealmPath: string, loadableRealmPath: string 
         schemaNames = loadableRealmRow.schemaNames;
     } else {
         // 1.2.1. Get all LoadableRealms
-        const loadableRealmRows: Realm.Results<LoadableRealmRowProperties> = getRealms(metaRealmPath);
+        const loadableRealmRows: Realm.Results<LoadableRealmRowProperties> = getLoadableRealms(metaRealmPath);
 
         // 1.2.2. Flatten all schema names into one list
         schemaNames = [];

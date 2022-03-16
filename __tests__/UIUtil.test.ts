@@ -105,7 +105,7 @@ describe('MetaRealm', () => {
 
         MetaRealm.saveSchemas([SCHEMA_PARAMS_1, SCHEMA_PARAMS_2, SCHEMA_PARAMS_3, SCHEMA_PARAMS_4, SCHEMA_PARAMS_5, SCHEMA_PARAMS_6]);
 
-        expect(MetaRealm.getRealmNames(metaRealmPath)).toEqual([REALM_PATH_1, REALM_PATH_2, REALM_PATH_3]);
+        expect(MetaRealm.getLoadableRealmNames(metaRealmPath)).toEqual([REALM_PATH_1, REALM_PATH_2, REALM_PATH_3]);
     });
 
     it('Should expose the names of schemas available in a realm', async () => {

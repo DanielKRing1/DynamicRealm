@@ -1,6 +1,6 @@
-export const META_SCHEMA_NAME: string = 'MetaSchemas';
-export const MetaSchema: Realm.ObjectSchema = {
-    name: META_SCHEMA_NAME,
+export const LOADABLE_SCHEMA_TABLE_NAME: string = 'LOADABLE_SCHEMAS';
+export const LoadableSchema: Realm.ObjectSchema = {
+    name: LOADABLE_SCHEMA_TABLE_NAME,
     primaryKey: 'name',
     properties: {
         name: 'string',
@@ -9,9 +9,9 @@ export const MetaSchema: Realm.ObjectSchema = {
     },
 };
 
-export const META_REALM_NAME: string = 'MetaRealms';
-export const MetaRealm: Realm.ObjectSchema = {
-    name: META_REALM_NAME,
+export const LOADABLE_REALM_TABLE_NAME: string = 'LOADABLE_REALMS';
+export const LoadableRealm: Realm.ObjectSchema = {
+    name: LOADABLE_REALM_TABLE_NAME,
     primaryKey: 'realmPath',
     properties: {
         realmPath: 'string',

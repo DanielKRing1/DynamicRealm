@@ -1,7 +1,7 @@
 import Realm from 'realm';
 
 import { Dict } from "..";
-import { MetaRealm, MetaSchema } from '../Schemas';
+import { LoadableRealm, LoadableSchema } from '../Schemas';
 
 function createMetaRealmsManager() {
     const metaRealmsMap: Dict<Realm> = {};
@@ -52,7 +52,7 @@ function createMetaRealmsManager() {
     // INTERNAL UTILS
 
     async function _openMetaRealm(metaRealmPath: string): Promise<Realm> {
-        let _realmInstance: Realm = await Realm.open({ schema: [MetaRealm, MetaSchema], path: metaRealmPath });
+        let _realmInstance: Realm = await Realm.open({ schema: [ LoadableRealm, LoadableSchema ], path: metaRealmPath });
         
         return _realmInstance;
     }

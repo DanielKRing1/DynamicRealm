@@ -1,9 +1,9 @@
 import { metaRealmManager } from '../Realm/metaRealmsManager';
-import { META_SCHEMA_NAME } from '../Schemas';
+import { LOADABLE_SCHEMA_TABLE_NAME } from '../Schemas';
 import { LoadableSchemaRowProperties, LoadableRealmRowProperties } from '../Schemas/types/types';
 import { Dict } from '../types/types';
-import { getLoadableRealmRow, _incrementRealmSchemaVersion, _rmRealmSchemaName } from './metaRealmOperations';
-import { SaveSchemaParams } from './types/types';
+import { getLoadableRealmRow, _incrementLoadableRealmSchemaVersion, _rmRealmSchemaName } from './metaRealmOperations';
+import { SaveSchemaParams, UpdateSchemaParams } from './types/types';
 
 export function saveSchemas(params: SaveSchemaParams[]) {
     params.forEach((param: SaveSchemaParams) => saveSchema(param));
@@ -15,8 +15,8 @@ export const MetadataType: Dict<string> = {
 };
 export function saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite = false, metadataType = MetadataType.Object }: SaveSchemaParams): Promise<void> {
     // 1. Check if schema already exists
-    const existingSchema: LoadableSchemaRowProperties = metaRealmManager.getMetaRealm(metaRealmPath).objectForPrimaryKey(META_SCHEMA_NAME, schema.name);
-    if(existingSchema && !overwrite) return;
+    const existingLoadableSchema: LoadableSchemaRowProperties = metaRealmManager.getMetaRealm(metaRealmPath).objectForPrimaryKey(LOADABLE_SCHEMA_TABLE_NAME, schema.name);
+    if(existingLoadableSchema && !overwrite) return;
 
     // 2. Create MetaSchema object to save
     const schemaObj: LoadableSchemaRowProperties = {
@@ -30,14 +30,16 @@ export function saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite
     };
 
     metaRealmManager.getMetaRealm(metaRealmPath).write(() => {
-        // 3. If exists, remove Schema and increment MetaRealm
-        if (existingSchema) {
+        // 3. If exists, remove this schema and increment MetaRealm schema verison
+        if (!!existingLoadableSchema) {
+            // 3.1. Remove schema row from MetaSchema table + Remove schemaName from MetaRealm.metaRealmPath row
             rmSchema(metaRealmPath, schema.name);
-            _incrementRealmSchemaVersion(metaRealmPath, loadableRealmPath);
+            // 3.2. Increment LoadableRealm schema version
+            _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableRealmPath);
         }
 
         // 4. Add the new schema to the MetaSchema table
-        metaRealmManager.getMetaRealm(metaRealmPath).create(META_SCHEMA_NAME, schemaObj);
+        metaRealmManager.getMetaRealm(metaRealmPath).create(LOADABLE_SCHEMA_TABLE_NAME, schemaObj);
 
         // 5. Get or create the MetaRealm
         const metaRealmRow: LoadableRealmRowProperties = getLoadableRealmRow(metaRealmPath, loadableRealmPath);
@@ -47,14 +49,18 @@ export function saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite
     });
 }
 
+export async function updateLoadableSchema({ metaRealmPath, loadableRealmPath, schema }: UpdateSchemaParams): Promise<void> {
+    await saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite: true });
+}
+
 export function getLoadableSchemaRow(metaRealmPath: string, schemaName: string): LoadableSchemaRowProperties {
-    return metaRealmManager.getMetaRealm(metaRealmPath).objectForPrimaryKey(META_SCHEMA_NAME, schemaName);
+    return metaRealmManager.getMetaRealm(metaRealmPath).objectForPrimaryKey(LOADABLE_SCHEMA_TABLE_NAME, schemaName);
 }
 
 export function getLoadableSchemaRows(metaRealmPath: string, schemaNames: string[]): LoadableSchemaRowProperties[] {
     // console.log('here7');
     if (!schemaNames) {
-        return Array.from(metaRealmManager.getMetaRealm(metaRealmPath).objects(META_SCHEMA_NAME));
+        return Array.from(metaRealmManager.getMetaRealm(metaRealmPath).objects(LOADABLE_SCHEMA_TABLE_NAME));
     }
 
     return schemaNames.map((schemaName: string) => getLoadableSchemaRow(metaRealmPath, schemaName)).filter((metaSchemaRow: LoadableSchemaRowProperties) => !!metaSchemaRow);

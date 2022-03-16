@@ -9,6 +9,11 @@ export type SaveSchemaParams = {
     overwrite?: boolean;
     metadataType?: string;
 };
+export type UpdateSchemaParams = {
+    metaRealmPath: string;
+    loadableRealmPath: string;
+    schema: Realm.ObjectSchema;
+};
 export type LoadRealmParams = {
     metaRealmPath: string;
     loadableRealmPath: string;

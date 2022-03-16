@@ -1,6 +1,6 @@
-import { CREATE_META_REALM_SCHEMA } from '../Realm/constants';
+import { CREATE_LOADABLE_REALM_SCHEMA } from '../Realm/constants';
 import { metaRealmManager } from '../Realm/metaRealmsManager';
-import { META_REALM_NAME } from '../Schemas';
+import { LOADABLE_REALM_TABLE_NAME } from '../Schemas';
 import { LoadableRealmRowProperties, LoadableSchemaRowProperties } from '../Schemas/types/types';
 
 /**
@@ -21,15 +21,15 @@ export function getLoadableRealmRow_wr(metaRealmPath: string, loadableRealmPath:
 
 export function getLoadableRealmRow(metaRealmPath: string, loadableRealmPath: string): LoadableRealmRowProperties {
     // 1. Check if MetaRealm exists
-    let loadableRealmRow: LoadableRealmRowProperties = metaRealmManager.getMetaRealm(metaRealmPath).objectForPrimaryKey(META_REALM_NAME, loadableRealmPath);
+    let loadableRealmRow: LoadableRealmRowProperties = metaRealmManager.getMetaRealm(metaRealmPath).objectForPrimaryKey(LOADABLE_REALM_TABLE_NAME, loadableRealmPath);
 
     // 2. Create MetaRealm object if not exists
     if (!loadableRealmRow) {
         // 2.1. Create object
-        const metaRealmSchemaObj: LoadableRealmRowProperties = CREATE_META_REALM_SCHEMA({ realmPath: loadableRealmPath });
+        const metaRealmSchemaObj: LoadableRealmRowProperties = CREATE_LOADABLE_REALM_SCHEMA({ realmPath: loadableRealmPath });
 
         // 5.1.2. Save
-        loadableRealmRow = metaRealmManager.getMetaRealm(metaRealmPath).create(META_REALM_NAME, metaRealmSchemaObj);
+        loadableRealmRow = metaRealmManager.getMetaRealm(metaRealmPath).create(LOADABLE_REALM_TABLE_NAME, metaRealmSchemaObj);
     }
 
     return loadableRealmRow;
@@ -55,12 +55,12 @@ export function _rmRealmSchemaName(metaRealmPath: string, loadableSchemaRow: Loa
     }
 }
 
-export function _incrementRealmSchemaVersion(metaRealmPath: string, loadableRealmPath: string) {
+export function _incrementLoadableRealmSchemaVersion(metaRealmPath: string, loadableRealmPath: string) {
     // 1. Get MetaRealm
-    const metaRealmRow: LoadableRealmRowProperties = getLoadableRealmRow(metaRealmPath, loadableRealmPath);
+    const loadableRealmRow: LoadableRealmRowProperties = getLoadableRealmRow(metaRealmPath, loadableRealmPath);
 
     // 2. Increment schemaVersion
-    if (metaRealmRow) {
-        metaRealmRow.schemaVersion++;
+    if (loadableRealmRow) {
+        loadableRealmRow.schemaVersion++;
     }
 }

@@ -11,8 +11,8 @@ describe('A MetaRealm with no saved schemas', () => {
         await MetaRealm.openMetaRealm({ metaRealmPath });
 
         try {
-            expect(() => MetaRealm.getRealmNames(metaRealmPath)).not.toThrowError();
-            expect(MetaRealm.getRealmNames(metaRealmPath)).toEqual([]);
+            expect(() => MetaRealm.getLoadableRealmNames(metaRealmPath)).not.toThrowError();
+            expect(MetaRealm.getLoadableRealmNames(metaRealmPath)).toEqual([]);
         } catch (err) {
             console.log('SHOULD NOT HAVE REACHED THIS PART OF CODE');
             console.log(err);

@@ -34,13 +34,13 @@ export async function openMetaRealm({ metaRealmPath = DEFAULT_META_REALM_PATH, f
 
 export async function loadRealm(metaRealmPath: string, loadableRealmPath: string): Promise<Realm> {
     // 1. Get MetaRealm row
-    const metaRealmRow: LoadableRealmRowProperties = getLoadableRealmRow_wr(metaRealmPath, loadableRealmPath);
+    const loadableRealmRow: LoadableRealmRowProperties = getLoadableRealmRow_wr(metaRealmPath, loadableRealmPath);
 
     // 2. Get MetaSchemas
-    const schema: Realm.ObjectSchema[] = getSchemas(metaRealmPath, metaRealmRow.schemaNames);
+    const schema: Realm.ObjectSchema[] = getSchemas(metaRealmPath, loadableRealmRow.schemaNames);
 
     // 3. Open Realm
-    return Realm.open({ schema, path: metaRealmRow.realmPath, schemaVersion: metaRealmRow.schemaVersion });
+    return Realm.open({ schema, path: loadableRealmRow.realmPath, schemaVersion: loadableRealmRow.schemaVersion });
 }
 
 /**
