@@ -49,7 +49,7 @@ export function saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite
     });
 }
 
-export async function updateLoadableSchema({ metaRealmPath, loadableRealmPath, schema }: UpdateSchemaParams): Promise<void> {
+export async function updateSchema({ metaRealmPath, loadableRealmPath, schema }: UpdateSchemaParams): Promise<void> {
     await saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite: true });
 }
 
