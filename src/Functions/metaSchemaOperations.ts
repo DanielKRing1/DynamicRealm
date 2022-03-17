@@ -71,8 +71,8 @@ export function updateSchemas(metaRealmPath: string, loadableRealmPath: string, 
     // 2. Undo each extra schema version increments to the targetted Loadable Realm (each increment after the first one)
     //      This is intended to avoid unnecessarily largest schema version numbers
     //      and treats bulk schema updates as a a single "batch" schema version increment
-    const decrementCount: number = schemasToUpdate.length - 1;
-    if(decrementCount > 0) _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableRealmPath, decrementCount);
+    const decrementCount: number = 0 - (schemasToUpdate.length - 1);
+    if(decrementCount < 0) _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableRealmPath, decrementCount);
 }
 
 export function getLoadableSchemaRow(metaRealmPath: string, schemaName: string): LoadableSchemaRowProperties {
