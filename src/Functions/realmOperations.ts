@@ -40,7 +40,9 @@ export async function loadRealm(metaRealmPath: string, loadableRealmPath: string
     const schema: Realm.ObjectSchema[] = getSchemas(metaRealmPath, loadableRealmRow.schemaNames);
 
     // 3. Open Realm
-    return Realm.open({ schema, path: loadableRealmRow.realmPath, schemaVersion: loadableRealmRow.schemaVersion });
+    const realm: Realm = await Realm.open({ schema, path: loadableRealmRow.realmPath, schemaVersion: loadableRealmRow.schemaVersion });
+
+    return realm;
 }
 
 /**
@@ -56,5 +58,7 @@ export async function loadRealmFromSchemas({ metaRealmPath, loadableRealmPath: p
     const schema: Realm.ObjectSchema[] = getSchemas(metaRealmPath, schemaNames);
 
     // 2. Open Realm
-    return Realm.open({ schema, path });
+    const realm: Realm = await Realm.open({ schema, path });
+
+    return realm;
 }
