@@ -1,6 +1,7 @@
 // TYPES
 
 import { Dict } from "../src";
+import { LOADABLE_SCHEMA_TABLE_NAME } from "../src/Schemas";
 
 type Schema = {
     name: string;
@@ -67,8 +68,16 @@ export default class Realm {
         return !isDuplicate ? row : undefined;
     }
 
+    // delete(schema: Realm.ObjectSchema) {
+    //     const index: number = this.schema.findIndex((s: Realm.ObjectSchema) => s.name === schema.name);
+    //     if (index > -1) this.schema.splice(index, 1);
+    // }
+
     delete(schema: Realm.ObjectSchema) {
-        const index: number = this.schema.findIndex((s: Realm.ObjectSchema) => s.name === schema.name);
-        if (index > -1) this.schema.splice(index, 1);
+        const loadableSchemaTable = this.data[LOADABLE_SCHEMA_TABLE_NAME];
+
+        const indexToDelete: number = loadableSchemaTable.findIndex((s: Realm.ObjectSchema) => s.name === schema.name);
+
+        if (indexToDelete > -1) this.data[LOADABLE_SCHEMA_TABLE_NAME].splice(indexToDelete, 1);
     }
 }
