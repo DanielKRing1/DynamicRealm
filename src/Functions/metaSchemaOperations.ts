@@ -5,7 +5,7 @@ import { Dict } from '../types/types';
 import { getLoadableRealmRow, _incrementLoadableRealmSchemaVersion, _rmRealmSchemaName } from './metaRealmOperations';
 import { SaveSchemaParams, UpdateSchemaParams } from './types/types';
 
-export function saveSchemas(params: SaveSchemaParams[]) {
+export function saveSchemas(params: SaveSchemaParams[]): void {
     params.forEach((param: SaveSchemaParams) => saveSchema(param));
 }
 
@@ -13,7 +13,7 @@ export const MetadataType: Dict<string> = {
     Object: 'object',
     List: 'list',
 };
-export function saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite = false, metadataType = MetadataType.Object }: SaveSchemaParams): Promise<void> {
+export function saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite = false, metadataType = MetadataType.Object }: SaveSchemaParams): void {
     // 1. Check if schema already exists
     const existingLoadableSchema: LoadableSchemaRowProperties = metaRealmManager.getMetaRealm(metaRealmPath).objectForPrimaryKey(LOADABLE_SCHEMA_TABLE_NAME, schema.name);
     if(existingLoadableSchema && !overwrite) return;
@@ -49,8 +49,30 @@ export function saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite
     });
 }
 
-export async function updateSchema({ metaRealmPath, loadableRealmPath, schema }: UpdateSchemaParams): Promise<void> {
-    await saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite: true });
+export function updateSchema({ metaRealmPath, loadableRealmPath, schema }: UpdateSchemaParams): void {
+    saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite: true })
+}
+
+/**
+ * Bulk update loadable schemas
+ * 
+ * These schemas are all expected to exist in the same metaRealmPath + loadableRealmPath pair
+ *      to reduce the number of Loadable Realm schema version increments
+ * If they do not, then simply use the "updateSchema" method to update each loadable schema individually
+ * 
+ * @param metaRealmPath 
+ * @param loadableRealmPath 
+ * @param schemasToUpdate 
+ */
+export function updateSchemas(metaRealmPath: string, loadableRealmPath: string, schemasToUpdate: Realm.ObjectSchema[]): void {
+    // 1. Update each loadable schema
+    schemasToUpdate.forEach((schema: Realm.ObjectSchema) => updateSchema({ metaRealmPath, loadableRealmPath, schema }));
+
+    // 2. Undo each extra schema version increments to the targetted Loadable Realm (each increment after the first one)
+    //      This is intended to avoid unnecessarily largest schema version numbers
+    //      and treats bulk schema updates as a a single "batch" schema version increment
+    const decrementCount: number = schemasToUpdate.length - 1;
+    if(decrementCount > 0) _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableRealmPath, decrementCount);
 }
 
 export function getLoadableSchemaRow(metaRealmPath: string, schemaName: string): LoadableSchemaRowProperties {

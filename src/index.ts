@@ -1,4 +1,4 @@
-import { saveSchema, saveSchemas, updateSchema, getSchema, getSchemas, rmSchema, rmSchemas } from './Functions/metaSchemaOperations';
+import { saveSchema, saveSchemas, updateSchema, getSchema, getSchemas, rmSchema, rmSchemas, updateSchemas } from './Functions/metaSchemaOperations';
 import { getMetadata, updateMetadata } from './Functions/metadataOperations';
 import { openMetaRealm, isInitialized, loadRealm, loadRealmFromSchemas } from './Functions/realmOperations';
 import { getLoadableRealmNames, getSchemaNames, getProperties } from './Functions/uiUtils';
@@ -15,6 +15,7 @@ export default {
     saveSchema,
     saveSchemas,
     updateSchema,
+    updateSchemas,
 
     getSchema,
     getSchemas,
