@@ -25,6 +25,8 @@ export default class Realm {
         return realm;
     }
 
+    close(): void {};
+
     constructor(params: { schema: Schema[]; path: string; schemaVersion: number }) {
         this.schema = params.schema;
         params.schema.forEach((schema: Schema) => (this.data[schema.name] = []));
