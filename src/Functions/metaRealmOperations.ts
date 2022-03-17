@@ -55,12 +55,12 @@ export function _rmRealmSchemaName(metaRealmPath: string, loadableSchemaRow: Loa
     }
 }
 
-export function _incrementLoadableRealmSchemaVersion(metaRealmPath: string, loadableRealmPath: string) {
+export function _incrementLoadableRealmSchemaVersion(metaRealmPath: string, loadableRealmPath: string, incrementCount: number = 1) {
     // 1. Get MetaRealm
     const loadableRealmRow: LoadableRealmRowProperties = getLoadableRealmRow(metaRealmPath, loadableRealmPath);
 
     // 2. Increment schemaVersion
     if (loadableRealmRow) {
-        loadableRealmRow.schemaVersion++;
+        loadableRealmRow.schemaVersion += incrementCount;
     }
 }
