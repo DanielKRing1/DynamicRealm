@@ -1,6 +1,6 @@
 import { metaRealmManager } from '../Realm/metaRealmsManager';
-import { LOADABLE_SCHEMA_TABLE_NAME } from '../Schemas';
-import { LoadableSchemaRowProperties, LoadableRealmRowProperties } from '../Schemas/types/types';
+import { LoadableSchema, LOADABLE_SCHEMA_TABLE_NAME } from '../Schemas';
+import { LoadableSchemaRowProperties, LoadableRealmRowProperties, LoadableSchemaRow } from '../Schemas/types/types';
 import { Dict } from '../types/types';
 import { getLoadableRealmRow, _incrementLoadableRealmSchemaVersion, _rmRealmSchemaName } from './metaRealmOperations';
 import { SaveSchemaParams, UpdateSchemaParams } from './types/types';
@@ -50,6 +50,15 @@ export function saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite
 }
 
 export function updateSchema({ metaRealmPath, loadableRealmPath, schema }: UpdateSchemaParams): void {
+    // // 1. Get existing Loadable Schema
+    // const existingLoadableSchema: LoadableSchemaRowProperties = getLoadableSchemaRow(metaRealmPath, schema.name);
+    // // 2. Throw an error if it cannot be found
+    // if(!existingLoadableSchema) _throwNoLoadableSchemaRowError(metaRealmPath, schema.name, 'updateSchema');
+
+    // // 3. Get loadableRealmPath from the schema
+    // const loadableRealmPath: string = existingLoadableSchema.realmPath;
+
+    // 4. Save the new schema
     saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite: true })
 }
 
@@ -72,14 +81,18 @@ export function updateSchemas(metaRealmPath: string, loadableRealmPath: string, 
     //      This is intended to avoid unnecessarily largest schema version numbers
     //      and treats bulk schema updates as a a single "batch" schema version increment
     const decrementCount: number = 0 - (schemasToUpdate.length - 1);
-    if(decrementCount < 0) _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableRealmPath, decrementCount);
+    if(decrementCount < 0) {
+        metaRealmManager.getMetaRealm(metaRealmPath).write(() => {
+            _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableRealmPath, decrementCount);
+        });
+    }
 }
 
-export function getLoadableSchemaRow(metaRealmPath: string, schemaName: string): LoadableSchemaRowProperties {
+export function getLoadableSchemaRow(metaRealmPath: string, schemaName: string): LoadableSchemaRow {
     return metaRealmManager.getMetaRealm(metaRealmPath).objectForPrimaryKey(LOADABLE_SCHEMA_TABLE_NAME, schemaName);
 }
 
-export function getLoadableSchemaRows(metaRealmPath: string, schemaNames: string[]): LoadableSchemaRowProperties[] {
+export function getLoadableSchemaRows(metaRealmPath: string, schemaNames: string[]): LoadableSchemaRow[] {
     // console.log('here7');
     if (!schemaNames) {
         return Array.from(metaRealmManager.getMetaRealm(metaRealmPath).objects(LOADABLE_SCHEMA_TABLE_NAME));
@@ -109,7 +122,7 @@ export function rmSchema(metaRealmPath: string, schemaName: string): boolean {
     let schemaExists = false;
 
     // 1. Get schema to delete
-    const loadableSchemaRow: LoadableSchemaRowProperties = getLoadableSchemaRow(metaRealmPath, schemaName);
+    const loadableSchemaRow: LoadableSchemaRow = getLoadableSchemaRow(metaRealmPath, schemaName);
 
     metaRealmManager.getMetaRealm(metaRealmPath).write(() => {
         // 2. Schema exists
@@ -122,6 +135,9 @@ export function rmSchema(metaRealmPath: string, schemaName: string): boolean {
 
             // 2.3. Remove schema name from MetaRealm
             _rmRealmSchemaName(metaRealmPath, loadableSchemaRow);
+
+            // 2.4. Increment LoadableRealm's schema version
+            _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableSchemaRow.realmPath);
         }
     });
 
@@ -129,23 +145,30 @@ export function rmSchema(metaRealmPath: string, schemaName: string): boolean {
 }
 
 export function rmSchemas(metaRealmPath: string, schemaNames: string[]): string[] {
-    let removedSchemas;
-
     // 1. Get schemas to delete
-    const loadableSchemaRows: LoadableSchemaRowProperties[] = getLoadableSchemaRows(metaRealmPath, schemaNames);
+    const loadableSchemaRows: LoadableSchemaRow[] = getLoadableSchemaRows(metaRealmPath, schemaNames);
 
     // 2. Mark schemas that exist
-    removedSchemas = loadableSchemaRows.map((loadableSchemaRow: LoadableSchemaRowProperties) => loadableSchemaRow.name);
+    let removedSchemas = loadableSchemaRows.map((loadableSchemaRow: LoadableSchemaRowProperties) => loadableSchemaRow.name);
 
     metaRealmManager.getMetaRealm(metaRealmPath).write(() => {
         // 3. Delete schemas
-        loadableSchemaRows.forEach((loadableSchemaRow: LoadableSchemaRowProperties) => {
+        loadableSchemaRows.forEach((loadableSchemaRow: LoadableSchemaRow) => {
             // 3.1. Delete
             metaRealmManager.getMetaRealm(metaRealmPath).delete(loadableSchemaRow);
             // 3.2. Remove schema name from MetaRealm
             _rmRealmSchemaName(metaRealmPath, loadableSchemaRow);
         });
+
+        // 4. Optimization to Update each Loadable Realm (loadableRealmPath) schema version only once
+        const loadableRealmPathSet: Set<string> = new Set<string>();
+        loadableSchemaRows.forEach((loadableSchemaRow: LoadableSchemaRow) => loadableRealmPathSet.add(loadableSchemaRow.realmPath));
+        loadableRealmPathSet.forEach((loadableRealmPath: string) => _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableRealmPath));
     });
 
     return removedSchemas;
 }
+
+function _throwNoLoadableSchemaRowError(metaRealmPath: string, schemaName: string, callingMethodName: string) {
+    throw new Error(`${callingMethodName} could not get LoadableSchemaRow "${schemaName}" from MetaRealm "${metaRealmPath}`);
+};

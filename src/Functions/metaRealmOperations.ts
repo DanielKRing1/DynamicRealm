@@ -1,7 +1,7 @@
 import { CREATE_LOADABLE_REALM_SCHEMA } from '../Realm/constants';
 import { metaRealmManager } from '../Realm/metaRealmsManager';
 import { LOADABLE_REALM_TABLE_NAME } from '../Schemas';
-import { LoadableRealmRowProperties, LoadableSchemaRowProperties } from '../Schemas/types/types';
+import { LoadableRealmRow, LoadableRealmRowProperties, LoadableSchemaRow, LoadableSchemaRowProperties } from '../Schemas/types/types';
 
 /**
  * Opens a write transaction
@@ -19,9 +19,9 @@ export function getLoadableRealmRow_wr(metaRealmPath: string, loadableRealmPath:
     return loadableRealmRow;
 }
 
-export function getLoadableRealmRow(metaRealmPath: string, loadableRealmPath: string): LoadableRealmRowProperties {
+export function getLoadableRealmRow(metaRealmPath: string, loadableRealmPath: string): Realm.Object & LoadableRealmRowProperties {
     // 1. Check if MetaRealm exists
-    let loadableRealmRow: LoadableRealmRowProperties = metaRealmManager.getMetaRealm(metaRealmPath).objectForPrimaryKey(LOADABLE_REALM_TABLE_NAME, loadableRealmPath);
+    let loadableRealmRow: LoadableRealmRow = metaRealmManager.getMetaRealm(metaRealmPath).objectForPrimaryKey(LOADABLE_REALM_TABLE_NAME, loadableRealmPath);
 
     // 2. Create MetaRealm object if not exists
     if (!loadableRealmRow) {
@@ -41,9 +41,9 @@ export function getLoadableRealmRow(metaRealmPath: string, loadableRealmPath: st
  *
  * @param schema the MetaSchema whose name will be removed from its MetaRealm's list
  */
-export function _rmRealmSchemaName(metaRealmPath: string, loadableSchemaRow: LoadableSchemaRowProperties): void {
+export function _rmRealmSchemaName(metaRealmPath: string, loadableSchemaRow: LoadableSchemaRow): void {
     // 1. Get MetaRealm
-    const loadableRealmRow: LoadableRealmRowProperties = getLoadableRealmRow(metaRealmPath, loadableSchemaRow.realmPath);
+    const loadableRealmRow: LoadableRealmRow = getLoadableRealmRow(metaRealmPath, loadableSchemaRow.realmPath);
 
     // 2. Remove schema name from MetaRealm
     if (!!loadableRealmRow) {
