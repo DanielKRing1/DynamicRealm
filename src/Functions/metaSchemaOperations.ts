@@ -34,8 +34,9 @@ export function saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite
         if (!!existingLoadableSchema) {
             // 3.1. Remove schema row from MetaSchema table + Remove schemaName from MetaRealm.metaRealmPath row
             rmSchema(metaRealmPath, schema.name);
-            // 3.2. Increment LoadableRealm schema version
-            _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableRealmPath);
+            // NO NEED TO INCREMENT BCUS "rmSchema" already does that
+            // // 3.2. Increment LoadableRealm schema version
+            // _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableRealmPath);
         }
 
         // 4. Add the new schema to the MetaSchema table
@@ -118,28 +119,33 @@ export function getSchemas(metaRealmPath: string, schemaNames: string[] = undefi
     return getLoadableSchemaRows(metaRealmPath, schemaNames).map((loadableSchemaRow: LoadableSchemaRowProperties) => JSON.parse(loadableSchemaRow.schema));
 }
 
+/**
+ * Make sure to call within a write block!
+ * 
+ * @param metaRealmPath 
+ * @param schemaName 
+ * @returns 
+ */
 export function rmSchema(metaRealmPath: string, schemaName: string): boolean {
     let schemaExists = false;
 
     // 1. Get schema to delete
     const loadableSchemaRow: LoadableSchemaRow = getLoadableSchemaRow(metaRealmPath, schemaName);
 
-    metaRealmManager.getMetaRealm(metaRealmPath).write(() => {
-        // 2. Schema exists
-        if (!!loadableSchemaRow) {
-            // 2.1. Mark as exists
-            schemaExists = true;
+    // 2. Schema exists
+    if (!!loadableSchemaRow) {
+        // 2.1. Mark as exists
+        schemaExists = true;
 
-            // 2.2. Delete from MetaSchema
-            metaRealmManager.getMetaRealm(metaRealmPath).delete(loadableSchemaRow);
+        // 2.2. Delete from MetaSchema
+        metaRealmManager.getMetaRealm(metaRealmPath).delete(loadableSchemaRow);
 
-            // 2.3. Remove schema name from MetaRealm
-            _rmRealmSchemaName(metaRealmPath, loadableSchemaRow);
+        // 2.3. Remove schema name from MetaRealm
+        _rmRealmSchemaName(metaRealmPath, loadableSchemaRow);
 
-            // 2.4. Increment LoadableRealm's schema version
-            _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableSchemaRow.realmPath);
-        }
-    });
+        // 2.4. Increment LoadableRealm's schema version
+        _incrementLoadableRealmSchemaVersion(metaRealmPath, loadableSchemaRow.realmPath);
+    }
 
     return schemaExists;
 }
