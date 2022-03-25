@@ -1,4 +1,4 @@
-jest.mock('realm');
+jest.mock('realm', () => require('@asianpersonn/realm-mock'));
 
 import DynamicRealm, { SaveSchemaParams } from '../src';
 import { DEFAULT_META_REALM_PATH } from '../src/Realm/constants';

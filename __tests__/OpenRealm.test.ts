@@ -1,4 +1,4 @@
-jest.mock('realm');
+jest.mock('realm', () => require('@asianpersonn/realm-mock'));
 
 import Realm from 'realm';
 
@@ -105,7 +105,11 @@ describe('MetaRealm', () => {
 
         // 1. Open a realm with Schemas 1, 2, and 4
         const realm1: Realm = await MetaRealm.loadRealmFromSchemas({ metaRealmPath: SCHEMA_PARAMS_1.metaRealmPath, loadableRealmPath: testRealmPath1, schemaNames: [SCHEMA_1.name, SCHEMA_2.name, SCHEMA_4.name] });
-        expect(realm1.schema).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_4]);
+        expect(realm1.schema).toEqual({
+            [SCHEMA_1.name]: SCHEMA_1, 
+            [SCHEMA_2.name]: SCHEMA_2, 
+            [SCHEMA_4.name]: SCHEMA_4,
+        });
 
         // 2. Open a realm with Schemas 1-6
         const realm2: Realm = await MetaRealm.loadRealmFromSchemas({
@@ -113,7 +117,14 @@ describe('MetaRealm', () => {
             loadableRealmPath: testRealmPath2,
             schemaNames: [SCHEMA_1.name, SCHEMA_2.name, SCHEMA_3.name, SCHEMA_4.name, SCHEMA_5.name, SCHEMA_6.name],
         });
-        expect(realm2.schema).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3, SCHEMA_4, SCHEMA_5, SCHEMA_6]);
+        expect(realm2.schema).toEqual({
+            [SCHEMA_1.name]: SCHEMA_1, 
+            [SCHEMA_2.name]: SCHEMA_2, 
+            [SCHEMA_3.name]: SCHEMA_3, 
+            [SCHEMA_4.name]: SCHEMA_4, 
+            [SCHEMA_5.name]: SCHEMA_5, 
+            [SCHEMA_6.name]: SCHEMA_6,
+        });
 
         // 3. Open a realm with Schemas 1-6 and a non-existant schema
         const realm3: Realm = await MetaRealm.loadRealmFromSchemas({
@@ -121,7 +132,14 @@ describe('MetaRealm', () => {
             loadableRealmPath: testRealmPath3,
             schemaNames: [SCHEMA_1.name, 'non-existant schema name 1', SCHEMA_2.name, SCHEMA_3.name, SCHEMA_4.name, SCHEMA_5.name, SCHEMA_6.name, 'non-existant schema name 2'],
         });
-        expect(realm3.schema).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3, SCHEMA_4, SCHEMA_5, SCHEMA_6]);
+        expect(realm3.schema).toEqual({
+            [SCHEMA_1.name]: SCHEMA_1, 
+            [SCHEMA_2.name]: SCHEMA_2, 
+            [SCHEMA_3.name]: SCHEMA_3, 
+            [SCHEMA_4.name]: SCHEMA_4, 
+            [SCHEMA_5.name]: SCHEMA_5, 
+            [SCHEMA_6.name]: SCHEMA_6,
+        });
     });
 
     it('Should open a realm, given a realm name', async () => {
@@ -131,14 +149,23 @@ describe('MetaRealm', () => {
 
         // 1. Load realm1, should have Schemas 1, 2, and 3
         const realm1: Realm = await MetaRealm.loadRealm(SCHEMA_PARAMS_1.metaRealmPath, REALM_PATH_1);
-        expect(realm1.schema).toEqual([SCHEMA_1, SCHEMA_2, SCHEMA_3]);
+        expect(realm1.schema).toEqual({
+            [SCHEMA_1.name]: SCHEMA_1,
+            [SCHEMA_2.name]: SCHEMA_2,
+            [SCHEMA_3.name]: SCHEMA_3,
+        });
 
         // 2. Load realm2, should have Schemas 4 and 5
         const realm2: Realm = await MetaRealm.loadRealm(SCHEMA_PARAMS_1.metaRealmPath, REALM_PATH_2);
-        expect(realm2.schema).toEqual([SCHEMA_4, SCHEMA_5]);
+        expect(realm2.schema).toEqual({
+            [SCHEMA_4.name]: SCHEMA_4,
+            [SCHEMA_5.name]: SCHEMA_5,
+        });
 
         // 3. Load realm3, should have Schemas 6
         const realm3: Realm = await MetaRealm.loadRealm(SCHEMA_PARAMS_1.metaRealmPath, REALM_PATH_3);
-        expect(realm3.schema).toEqual([SCHEMA_6]);
+        expect(realm3.schema).toEqual({
+            [SCHEMA_6.name]: SCHEMA_6,
+        });
     });
 });

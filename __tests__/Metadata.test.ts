@@ -1,4 +1,4 @@
-jest.mock('realm');
+jest.mock('realm', () => require('@asianpersonn/realm-mock'));
 
 import Realm from 'realm';
 

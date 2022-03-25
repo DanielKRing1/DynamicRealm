@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@asianpersonn/realm-mock@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@asianpersonn/realm-mock/-/realm-mock-1.0.1.tgz#c0317a936caba1cea68daff445acf87ac71627b7"
+  integrity sha512-Jk5CRO7SwOu2N5olDu4Q6wwE0v7ek4JrGuHGqXd6L7dXeS3rDOdum0X4KgqF0j2F42z4L6iM347ghhDpsVfvpw==
+
 "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.16.0":
   version "7.16.0"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.16.0.tgz#0dfc80309beec8411e65e706461c408b0bb9b431"
