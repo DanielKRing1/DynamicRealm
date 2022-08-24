@@ -1,4 +1,5 @@
 import Realm from 'realm';
+import { Dict } from '..';
 
 import { DEFAULT_META_REALM_PATH } from '../Realm/constants';
 import { metaRealmManager } from '../Realm/metaRealmsManager';
@@ -6,6 +7,8 @@ import { LoadableRealmRowProperties } from '../Schemas/types/types';
 import { getLoadableRealmRow_wr } from './metaRealmOperations';
 import { getSchemas } from './metaSchemaOperations';
 import { InitParams, LoadRealmParams } from './types/types';
+
+const loadableRealmsMap: Dict<Realm> = {};
 
 export function isInitialized(metaRealmPath: string) {
     return metaRealmManager.hasMetaRealm(metaRealmPath);
@@ -33,14 +36,18 @@ export async function openMetaRealm({ metaRealmPath = DEFAULT_META_REALM_PATH, f
 }
 
 export async function loadRealm(metaRealmPath: string, loadableRealmPath: string): Promise<Realm> {
+    
     // 1. Get MetaRealm row
     const loadableRealmRow: LoadableRealmRowProperties = getLoadableRealmRow_wr(metaRealmPath, loadableRealmPath);
 
     // 2. Get MetaSchemas
     const schema: Realm.ObjectSchema[] = getSchemas(metaRealmPath, loadableRealmRow.schemaNames);
 
-    // 3. Open Realm
-    const realm: Realm = await Realm.open({ schema, path: loadableRealmRow.realmPath, schemaVersion: loadableRealmRow.schemaVersion });
+    // 3. Close any existing open Realm
+    tryCloseRealm(loadableRealmPath);
+
+    // 4. Open Realm
+    const realm: Realm = await openRealm({ schema, path: loadableRealmRow.realmPath, schemaVersion: loadableRealmRow.schemaVersion });
 
     return realm;
 }
@@ -58,7 +65,34 @@ export async function loadRealmFromSchemas({ metaRealmPath, loadableRealmPath: p
     const schema: Realm.ObjectSchema[] = getSchemas(metaRealmPath, schemaNames);
 
     // 2. Open Realm
-    const realm: Realm = await Realm.open({ schema, path });
+    const realm: Realm = await openRealm({ schema, path });
 
     return realm;
+}
+
+/**
+ * Opens and caches a Loadable Realm
+ * so it can be closed later (for example, when loading a Realm when it is already open)
+ * 
+ * @param config 
+ * @returns 
+ */
+async function openRealm(config: Realm.Configuration) {
+    // 1. Open Realm
+    const realm: Realm = await Realm.open(config);
+
+    // 2. Cache Realm
+    loadableRealmsMap[realm.path] = realm;
+
+    return realm;
+}
+
+function getOpenRealm(loadableRealmPath: string) {
+    return loadableRealmsMap[loadableRealmPath];
+}
+
+export function tryCloseRealm(loadableRealmPath: string) {
+    const realm: Realm | undefined = getOpenRealm(loadableRealmPath);
+
+    if(!!realm) realm.close();
 }
