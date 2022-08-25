@@ -43,10 +43,7 @@ export async function loadRealm(metaRealmPath: string, loadableRealmPath: string
     // 2. Get MetaSchemas
     const schema: Realm.ObjectSchema[] = getSchemas(metaRealmPath, loadableRealmRow.schemaNames);
 
-    // 3. Close any existing open Realm
-    tryCloseRealm(loadableRealmPath);
-
-    // 4. Open Realm
+    // 3. Open Realm
     const realm: Realm = await openRealm({ schema, path: loadableRealmRow.realmPath, schemaVersion: loadableRealmRow.schemaVersion });
 
     return realm;
@@ -78,11 +75,14 @@ export async function loadRealmFromSchemas({ metaRealmPath, loadableRealmPath: p
  * @returns 
  */
 async function openRealm(config: Realm.Configuration) {
-    // 1. Open Realm
+    // 1. Try close Realm if currently open
+    tryCloseRealm(config.path);
+
+    // 2. Open Realm
     const realm: Realm = await Realm.open(config);
 
-    // 2. Cache Realm
-    loadableRealmsMap[realm.path] = realm;
+    // 3. Cache Realm
+    loadableRealmsMap[config.path] = realm;
 
     return realm;
 }
