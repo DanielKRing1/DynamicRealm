@@ -29,7 +29,13 @@ export function getLoadableRealmRow(metaRealmPath: string, loadableRealmPath: st
         const metaRealmSchemaObj: LoadableRealmRowProperties = CREATE_LOADABLE_REALM_SCHEMA({ realmPath: loadableRealmPath });
 
         // 5.1.2. Save
-        loadableRealmRow = metaRealmManager.getMetaRealm(metaRealmPath).create(LOADABLE_REALM_TABLE_NAME, metaRealmSchemaObj);
+        try {
+            loadableRealmRow = metaRealmManager.getMetaRealm(metaRealmPath).create(LOADABLE_REALM_TABLE_NAME, metaRealmSchemaObj);
+        }
+        catch(err) {
+            // console.log(err)
+            // Error thrown to prevent writing duplicate; Do nothing
+        }
     }
 
     return loadableRealmRow;

@@ -40,7 +40,13 @@ export function saveSchema({ metaRealmPath, loadableRealmPath, schema, overwrite
         }
 
         // 4. Add the new schema to the MetaSchema table
-        metaRealmManager.getMetaRealm(metaRealmPath).create(LOADABLE_SCHEMA_TABLE_NAME, schemaObj);
+        try {
+            metaRealmManager.getMetaRealm(metaRealmPath).create(LOADABLE_SCHEMA_TABLE_NAME, schemaObj);
+        }
+        catch(err) {
+            // console.log(err)
+            // Error thrown to prevent writing duplicate; Do nothing
+        }
 
         // 5. Get or create the MetaRealm
         const metaRealmRow: LoadableRealmRowProperties = getLoadableRealmRow(metaRealmPath, loadableRealmPath);
