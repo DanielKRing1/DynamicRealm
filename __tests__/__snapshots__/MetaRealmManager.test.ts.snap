@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MetaRealmManager Should be able to close the first MetaRealm 1`] = `
+Array [
+  Realm {},
+  Realm {},
+]
+`;
+
+exports[`MetaRealmManager Should be able to close the first MetaRealm 2`] = `
+Array [
+  Realm {},
+  Realm {},
+]
+`;
+
+exports[`MetaRealmManager Should be able to open 1 MetaRealm 1`] = `
+Array [
+  Realm {},
+]
+`;
+
+exports[`MetaRealmManager Should be able to open 1 MetaRealm 2`] = `
+Array [
+  Realm {},
+]
+`;
+
+exports[`MetaRealmManager Should be able to open 2 more MetaRealms, for a total of 3 1`] = `
+Array [
+  Realm {},
+  Realm {},
+  Realm {},
+]
+`;
+
+exports[`MetaRealmManager Should be able to open 2 more MetaRealms, for a total of 3 2`] = `
+Array [
+  Realm {},
+  Realm {},
+  Realm {},
+]
+`;
+
+exports[`MetaRealmManager Should be able to reopen the first MetaRealms, for a total of 3 1`] = `
+Array [
+  Realm {},
+  Realm {},
+  Realm {},
+]
+`;
+
+exports[`MetaRealmManager Should be able to reopen the first MetaRealms, for a total of 3 2`] = `
+Array [
+  Realm {},
+  Realm {},
+  Realm {},
+]
+`;

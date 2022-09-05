@@ -1,38 +1,18 @@
-import { saveSchema, saveSchemas, updateSchema, getSchema, getSchemas, rmSchema, rmSchemas, updateSchemas } from './Functions/metaSchemaOperations';
-import { getMetadata, updateMetadata } from './Functions/metadataOperations';
-import { openMetaRealm, isInitialized, loadRealm, loadRealmFromSchemas } from './Functions/realmOperations';
-import { getLoadableRealmNames, getSchemaNames, getProperties } from './Functions/uiUtils';
-import { ARRAY_METADATA_HANDLERS, DICT_METADATA_HANDLERS } from './Metadata/defaultHandlers';
+import { saveSchema, rmSchema, updateSchema } from './MetaRealms';
+import LoadableRealmManager from './LoadableRealms/loadableRealmManager';
+import { getLoadableRealmPaths, getProperties, getSchemaNames } from './UiUtils';
 
-export * from './Functions/types/types';
-export * from './Metadata/types/types';
-export * from './Schemas/types/types';
+export * from './MetaRealms/types';
 export * from './types/types';
 
 export default {
-    openMetaRealm,
-    isInitialized,
     saveSchema,
-    saveSchemas,
     updateSchema,
-    updateSchemas,
-
-    getSchema,
-    getSchemas,
-
     rmSchema,
-    rmSchemas,
 
-    loadRealm,
-    loadRealmFromSchemas,
+    ...LoadableRealmManager,
 
-    getMetadata,
-    updateMetadata,
-
-    getLoadableRealmNames,
+    getLoadableRealmPaths,
     getSchemaNames,
     getProperties,
-
-    ARRAY_METADATA_HANDLERS,
-    DICT_METADATA_HANDLERS,
 };

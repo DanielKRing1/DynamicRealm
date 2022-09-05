@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoadableRealmManager Should be able to open 1 LoadableRealm with LoadableSchemas 1-3 in MetaRealm1.LoadableRealm1 1`] = `
+Array [
+  Realm {},
+]
+`;
+
+exports[`LoadableRealmManager Should be able to open 1 LoadableRealm with LoadableSchemas 1-3 in MetaRealm1.LoadableRealm1 2`] = `
+Array [
+  Realm {},
+]
+`;
+
+exports[`LoadableRealmManager Should be able to open 1 LoadableRealm with LoadableSchemas 1-3 in MetaRealm1.LoadableRealm1 3`] = `Realm {}`;
+
+exports[`LoadableRealmManager Should be able to open another LoadableRealm with LoadableSchemas 2-3 in MetaRealm2.LoadableRealm1 1`] = `
+Array [
+  Realm {},
+  Realm {},
+]
+`;
+
+exports[`LoadableRealmManager Should be able to open another LoadableRealm with LoadableSchemas 2-3 in MetaRealm2.LoadableRealm1 2`] = `
+Array [
+  Realm {},
+  Realm {},
+]
+`;
+
+exports[`LoadableRealmManager Should be able to open another LoadableRealm with LoadableSchemas 2-3 in MetaRealm2.LoadableRealm1 3`] = `Realm {}`;
+
+exports[`LoadableRealmManager Should be able to open another LoadableRealm with LoadableSchemas 4-5 in MetaRealm2.LoadableRealm2 1`] = `
+Array [
+  Realm {},
+  Realm {},
+  Realm {},
+]
+`;
+
+exports[`LoadableRealmManager Should be able to open another LoadableRealm with LoadableSchemas 4-5 in MetaRealm2.LoadableRealm2 2`] = `
+Array [
+  Realm {},
+  Realm {},
+  Realm {},
+]
+`;
+
+exports[`LoadableRealmManager Should be able to open another LoadableRealm with LoadableSchemas 4-5 in MetaRealm2.LoadableRealm2 3`] = `Realm {}`;
+
+exports[`LoadableRealmManager Should be able to open another LoadableRealm with LoadableSchemas 4-5 in MetaRealm2.LoadableRealm2 4`] = `Realm {}`;

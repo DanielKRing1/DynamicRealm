@@ -8,7 +8,7 @@ function getLoadableRealms(metaRealmPath: string): Realm.Results<LoadableRealmRo
     return metaRealmManager.getMetaRealm(metaRealmPath).objects<LoadableRealmRowProperties>(LOADABLE_REALM_TABLE_NAME);
 }
 
-export function getLoadableRealmNames(metaRealmPath: string): string[] {
+export function getLoadableRealmPaths(metaRealmPath: string): string[] {
     return getLoadableRealms(metaRealmPath).map((realm) => realm.realmPath);
 }
 
