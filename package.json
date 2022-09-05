@@ -1,6 +1,6 @@
 {
-  "name": "metarealm",
-  "version": "1.0.2",
+  "name": "@asianperosnn/metarealm",
+  "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
