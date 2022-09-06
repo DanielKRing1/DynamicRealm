@@ -9,9 +9,9 @@ import { LoadableRealmParams, LoadableRealmRow, LoadableRealmRowProperties, Load
  * 
  * @param param0 
  */
-export const saveSchema = async ({ metaRealmPath, loadableRealmPath, schema }: SaveSchemaParams): Promise<void> => {
+export const saveSchema = ({ metaRealmPath, loadableRealmPath, schema }: SaveSchemaParams): void => {
     // 1. Get MetaRealm
-    const metaRealm: Realm = await MetaRealmManager.getMetaRealm(metaRealmPath);
+    const metaRealm: Realm = MetaRealmManager.getMetaRealm(metaRealmPath);
 
     // 2. Create MetaSchema object to save
     const schemaObj: LoadableSchemaRowProperties = {
@@ -29,7 +29,7 @@ export const saveSchema = async ({ metaRealmPath, loadableRealmPath, schema }: S
     })
 
     // 5. Get or create the MetaRealm
-    const loadableRealmRow: LoadableRealmRow = await getLoadableRealmRow({ metaRealmPath, loadableRealmPath });
+    const loadableRealmRow: LoadableRealmRow = getLoadableRealmRow({ metaRealmPath, loadableRealmPath });
 
     // 6. Add new MetaSchema's name to MetaRealm
     // Do not re-push schema name into LoadableRealm row's list of schemaNames
@@ -40,13 +40,13 @@ export const saveSchema = async ({ metaRealmPath, loadableRealmPath, schema }: S
     })
 }
 
-export const updateSchema = async ({ metaRealmPath, loadableRealmPath, schema }: UpdateSchemaParams): Promise<boolean> => {
+export const updateSchema = ({ metaRealmPath, loadableRealmPath, schema }: UpdateSchemaParams): boolean => {
     // 1. Get LoadableRealmRow
-    const loadableSchemaRow: LoadableSchemaRowProperties = await getLoadableSchemaRow({ metaRealmPath, schemaName: schema.name });
+    const loadableSchemaRow: LoadableSchemaRowProperties = getLoadableSchemaRow({ metaRealmPath, schemaName: schema.name });
     // 2. Get LoadableRealmRow
-    const loadableRealmRow: LoadableRealmRowProperties = await getLoadableRealmRow({ metaRealmPath, loadableRealmPath });
+    const loadableRealmRow: LoadableRealmRowProperties = getLoadableRealmRow({ metaRealmPath, loadableRealmPath });
 
-    const metaRealm: Realm = await MetaRealmManager.getMetaRealm(metaRealmPath);
+    const metaRealm: Realm = MetaRealmManager.getMetaRealm(metaRealmPath);
 
     _write(metaRealm, () => {
         // 3. Update schema
@@ -66,13 +66,13 @@ export const updateSchema = async ({ metaRealmPath, loadableRealmPath, schema }:
  * @param param0 
  * @returns 
  */
-export const rmSchema = async ({ metaRealmPath, loadableRealmPath, schemaName }: RmSchemaParams): Promise<boolean> => {
+export const rmSchema = ({ metaRealmPath, loadableRealmPath, schemaName }: RmSchemaParams): boolean => {
     // 1. Get LoadableRealmRow
-    const loadableSchemaRow: LoadableSchemaRowProperties = await getLoadableSchemaRow({ metaRealmPath, schemaName });
+    const loadableSchemaRow: LoadableSchemaRowProperties = getLoadableSchemaRow({ metaRealmPath, schemaName });
     // 2. Get LoadableRealmRow
-    const loadableRealmRow: LoadableRealmRowProperties = await getLoadableRealmRow({ metaRealmPath, loadableRealmPath });
+    const loadableRealmRow: LoadableRealmRowProperties = getLoadableRealmRow({ metaRealmPath, loadableRealmPath });
 
-    const metaRealm: Realm = await MetaRealmManager.getMetaRealm(metaRealmPath);
+    const metaRealm: Realm = MetaRealmManager.getMetaRealm(metaRealmPath);
 
     _write(metaRealm, () => {
         // 3. Delete LoadableSchema row
@@ -92,9 +92,9 @@ export const rmSchema = async ({ metaRealmPath, loadableRealmPath, schemaName }:
     return loadableSchemaRow !== undefined && loadableSchemaRow !== undefined;
 }
 
-export const getAllLoadableSchemaRows = async (metaRealmPath: string): Promise<Realm.Results<LoadableSchemaRow>> => {
+export const getAllLoadableSchemaRows = (metaRealmPath: string): Realm.Results<LoadableSchemaRow> => {
     // 1. Get MetaRealm
-    const metaRealm: Realm = await MetaRealmManager.getMetaRealm(metaRealmPath);
+    const metaRealm: Realm = MetaRealmManager.getMetaRealm(metaRealmPath);
     
     // 2. Get LoadableSchema rows
     const loadableSchemaRows: Results<LoadableSchemaRow> = metaRealm.objects(LOADABLE_SCHEMA_TABLE_NAME);
@@ -111,9 +111,9 @@ export const getAllLoadableSchemaRows = async (metaRealmPath: string): Promise<R
  * @param param0 
  * @returns 
  */
-export const getLoadableSchemaRow = async ({ metaRealmPath, schemaName }: LoadableSchemaParams): Promise<LoadableSchemaRow | undefined> => {
+export const getLoadableSchemaRow = ({ metaRealmPath, schemaName }: LoadableSchemaParams): LoadableSchemaRow | undefined => {
     // 1. Get MetaRealm
-    const metaRealm: Realm = await MetaRealmManager.getMetaRealm(metaRealmPath);
+    const metaRealm: Realm = MetaRealmManager.getMetaRealm(metaRealmPath);
     
     // 2. Get LoadableSchema row
     const loadableSchemaRow: LoadableSchemaRow | undefined = metaRealm.objectForPrimaryKey(LOADABLE_SCHEMA_TABLE_NAME, schemaName);
@@ -121,9 +121,9 @@ export const getLoadableSchemaRow = async ({ metaRealmPath, schemaName }: Loadab
     return loadableSchemaRow;
 }
 
-export const getAllLoadableRealmRows = async (metaRealmPath: string): Promise<Realm.Results<LoadableRealmRow>> => {
+export const getAllLoadableRealmRows = (metaRealmPath: string): Realm.Results<LoadableRealmRow> => {
     // 1. Get MetaRealm
-    const metaRealm: Realm = await MetaRealmManager.getMetaRealm(metaRealmPath);
+    const metaRealm: Realm = MetaRealmManager.getMetaRealm(metaRealmPath);
 
     // 2. Get LoadableRealm rows
     const loadableRealmRows: Results<LoadableRealmRow> = metaRealm.objects<LoadableRealmRow>(LOADABLE_REALM_TABLE_NAME);
@@ -143,9 +143,9 @@ export const getAllLoadableRealmRows = async (metaRealmPath: string): Promise<Re
  * @param param0 
  * @returns 
  */
-export const getLoadableRealmRow = async ({ metaRealmPath, loadableRealmPath }: LoadableRealmParams): Promise<LoadableRealmRow> => {
+export const getLoadableRealmRow = ({ metaRealmPath, loadableRealmPath }: LoadableRealmParams): LoadableRealmRow => {
     // 1. Get MetaRealm
-    const metaRealm: Realm = await MetaRealmManager.getMetaRealm(metaRealmPath);
+    const metaRealm: Realm = MetaRealmManager.getMetaRealm(metaRealmPath);
     
     // 2. Get LoadableRealm row
     let loadableRealmRow: LoadableRealmRow | undefined = metaRealm.objectForPrimaryKey(LOADABLE_REALM_TABLE_NAME, loadableRealmPath);

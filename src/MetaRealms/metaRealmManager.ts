@@ -13,10 +13,10 @@ function createMetaRealmsManager() {
      * @param metaRealmPath 
      * @returns 
      */
-    const getMetaRealm = async (metaRealmPath: string): Promise<Realm> => {
+    const getMetaRealm = (metaRealmPath: string): Realm => {
         // 1. Open Realm if not exists or is closed
         if(!hasOpenMetaRealm(metaRealmPath)) {
-            let _realmInstance: Realm = await Realm.open({ schema: [ LoadableRealm, LoadableSchema ], path: metaRealmPath });
+            let _realmInstance: Realm = new Realm({ schema: [ LoadableRealm, LoadableSchema ], path: metaRealmPath });
             metaRealmsMap[metaRealmPath] = _realmInstance;
         }
 

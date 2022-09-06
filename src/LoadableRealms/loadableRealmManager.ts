@@ -22,7 +22,7 @@ function createLoadableRealmsManager() {
         // 1. Open Realm if not exists or is closed
         if(!hasOpenLoadableRealm({ metaRealmPath, loadableRealmPath })) {
 
-            const metaRealm: Realm = await MetaRealmManager.getMetaRealm(metaRealmPath);
+            const metaRealm: Realm = MetaRealmManager.getMetaRealm(metaRealmPath);
 
             let loadableRealmRow: LoadableRealmRow;
             let loadableRealmSchemaVersion: number;
@@ -67,7 +67,7 @@ function createLoadableRealmsManager() {
     const reloadRealm = async ({ metaRealmPath, loadableRealmPath }: LoadableRealmParams): Promise<Realm> => {
         closeLoadableRealm({ metaRealmPath, loadableRealmPath });
 
-        return loadRealm({ metaRealmPath, loadableRealmPath });
+        return await loadRealm({ metaRealmPath, loadableRealmPath });
     }
 
     /**
