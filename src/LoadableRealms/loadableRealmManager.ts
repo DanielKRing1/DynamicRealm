@@ -57,6 +57,47 @@ function createLoadableRealmsManager() {
         return loadedRealmsMap[fullLoadableRealmPath];
     };
 
+    const loadRealmSync = ({ metaRealmPath, loadableRealmPath }: LoadableRealmParams): Realm => {
+        const fullLoadableRealmPath: string = genFullLoadableRealmPath({ metaRealmPath, loadableRealmPath });
+
+        // 1. Open Realm if not exists or is closed
+        if(!hasOpenLoadableRealm({ metaRealmPath, loadableRealmPath })) {
+
+            const metaRealm: Realm = MetaRealmManager.getMetaRealm(metaRealmPath);
+
+            let loadableRealmRow: LoadableRealmRow;
+            let loadableRealmSchemaVersion: number;
+            let loadableSchemaNames: string[];
+            try {
+                loadableRealmRow = metaRealm.objectForPrimaryKey(LOADABLE_REALM_TABLE_NAME, loadableRealmPath);
+                loadableRealmSchemaVersion = loadableRealmRow.schemaVersion;
+                loadableSchemaNames = Array.from(loadableRealmRow.schemaNames);
+            }
+            catch(err) {
+                _throwNoRealmRowError(metaRealmPath, loadableRealmPath);
+            }
+
+            const loadableSchemaRows: LoadableSchemaRow[] = loadableSchemaNames.map((schemaName: string) => metaRealm.objectForPrimaryKey(LOADABLE_SCHEMA_TABLE_NAME, schemaName));
+            const loadableSchemas: Realm.ObjectSchema[] = loadableSchemaRows.map((schemaRow: LoadableSchemaRowProperties) => JSON.parse(schemaRow.schema));
+            
+            let _realmInstance: Realm;
+            try {
+                _realmInstance = new Realm({ schema: loadableSchemas, path: fullLoadableRealmPath, schemaVersion: loadableRealmSchemaVersion });
+            }
+            catch(err) {
+                console.log(err);
+            }
+
+            loadedRealmsMap[fullLoadableRealmPath] = _realmInstance;
+        }
+
+        // 2. If still not exists, throw an error
+        if(!hasOpenLoadableRealm({ metaRealmPath, loadableRealmPath })) _throwNoRealmError(loadableRealmPath);
+
+        // 3. Return open Realm
+        return loadedRealmsMap[fullLoadableRealmPath];
+    };
+
     /**
      * Close an existing open LoadableRealm and
      * Open a new LoadableRealm
@@ -68,6 +109,12 @@ function createLoadableRealmsManager() {
         closeLoadableRealm({ metaRealmPath, loadableRealmPath });
 
         return await loadRealm({ metaRealmPath, loadableRealmPath });
+    }
+
+    const reloadRealmSync = ({ metaRealmPath, loadableRealmPath }: LoadableRealmParams): Realm => {
+        closeLoadableRealm({ metaRealmPath, loadableRealmPath });
+
+        return loadRealmSync({ metaRealmPath, loadableRealmPath });
     }
 
     /**
@@ -134,6 +181,9 @@ function createLoadableRealmsManager() {
     return {
         loadRealm,
         reloadRealm,
+        loadRealmSync,
+        reloadRealmSync,
+        
         hasLoadableRealm,
         hasOpenLoadableRealm,
         closeLoadableRealm,
