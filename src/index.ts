@@ -1,5 +1,6 @@
 import { saveSchema, rmSchema, updateSchema } from './MetaRealms';
 import LoadableRealmManager from './LoadableRealms/loadableRealmManager';
+import MetaRealmManager from './MetaRealms/metaRealmManager';
 import { getLoadableRealmPaths, getProperties, getSchemaNames } from './UiUtils';
 
 export * from './MetaRealms/types';
@@ -10,7 +11,8 @@ export default {
     updateSchema,
     rmSchema,
 
-    ...LoadableRealmManager,
+    LoadableRealmManager,
+    MetaRealmManager,
 
     getLoadableRealmPaths,
     getSchemaNames,
